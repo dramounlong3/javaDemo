@@ -206,9 +206,122 @@ public class Main {
         System.out.println("9於16進制底下中所代表的數值: " + Character.digit('9', 16));
         System.out.println("F於16進制底下中所代表的數值: " + Character.digit('F', 16));
         System.out.println("G於16進制底下中所代表的數值: " + Character.digit('G', 16)); //16進位最多只到F
-
-
         // 12-1
+
+        // 12-3-1 字串長度, 字串比較
+            char[] ch3 = {'台', '灣', '科', '技', '大', '學'};
+            char[] ch4 = {'T','A','I','W','A','N','-','T','E','C','H'};
+            String str1 = new String(ch3); //str1雖內容與str2相同, 但指向不同的記憶體空間
+            String str2 = new String(ch3);
+            String str3 = new String(); //建立空字串
+        System.out.println("str1 == str2 ? ==> " + (str1 == str2)); //運算式要加括號, 不然會變成str1先上前面的字串後才做相等比較
+        str1 = str2; //這會造成st1變成和str2指向相同的記憶體空間
+        System.out.println("After expression str1 == str2 ? ==> " + (str1 == str2));
+        System.out.println("str3字串長度= " + str3.length());
+        System.out.println("str3字串是否為空字串 "+ str3.isEmpty());
+        // 12-3-1
+
+        // 12-3-3 字元搜尋, 找不到回傳-1
+        String str4 = "Ming-Chi Institute of Technology";
+        System.out.println("字元 i 最先出現的位置= " + str4.indexOf('i'));                               //1
+        System.out.println("字元 i 最後出現的位置= " + str4.lastIndexOf('i'));                        //13
+        System.out.println("字元 i 從index 7起最先出現的位置= " + str4.indexOf('i', 7));      //7
+        System.out.println("字元 i 從index 5起最後出現的位置= " + str4.lastIndexOf('i', 12)); //7 表示從 index 0 ~ 12之間, 最後一次出現i的位置在7, 相當於從12開始往前找第一次出現i的位置
+        // 12-3-3 字元搜尋
+
+        // 12-3-4 子字串搜尋, 找不到回傳-1
+        String str5 = "小龍女神鵰俠侶是楊過與小龍女的故事我最喜歡小龍女在古墓的日子小龍女";
+        String subStr5 = "小龍女";
+        System.out.println("小龍女最先出現的位置= " + str5.indexOf(subStr5));                  //0  第一次找到小龍女後 回傳 "小"的位置
+        System.out.println("小龍女最後出現的位置= " + str5.lastIndexOf(subStr5));              //30 最後一次找到小龍女後 回傳 "小" 的位置
+        System.out.println("小龍女最先出現的位置= " + str5.indexOf(subStr5, 15));     //21 從index15開始往後第一次找到小龍女後 回傳 "小"的位置
+        System.out.println("小龍女最先出現的位置= " + str5.lastIndexOf(subStr5, 15)); //11 從index15開始往前第一次找到小龍女後 回傳 "小"的位置
+        // 12-3-4 子字串搜尋
+
+        // 12-3-4 是否包含子字串
+        String str6 = "台灣科技大學";
+        String str7 = "台灣";
+        System.out.println("台灣科技大學是否包含子字串\"台灣\"= " + str6.contains(str7)); //true
+        // 12-3-4 是否包含子字串
+
+        // 12-3-5 擷取"字串"的 子字串 或 字元
+        String str8 = "神鵰俠侶是楊過與小龍女的故事";
+        System.out.println("str8[2]的字元= " + str8.charAt(2));                          //俠
+        System.out.println("str8[5 ~ final]的字串= " + str8.substring(5));      //楊過與小龍女的故事, 沒給endindex預設就會擷取到最後
+        System.out.println("str[5 ~ 10]的字串= " + str8.substring(5, 11));               //楊過與小龍女       擷取 str8 [ 5 ~ (11 -1) ] 的字串
+        char[] ch = str8.toCharArray();                                                 //將字串 轉為 字元陣列
+        System.out.println("列印部分字元= " + ch[0] + ch[1] + ch[2] + ch[3]);             //神雕俠侶, 因為無法用字串str8[0]取得單一字元
+
+        //getChars
+        char[] ch5 = new char[15];
+        str8.getChars(5, 11, ch5, 3); //從str8擷取index 5 ~ 10 的字元, 複製到 ch5的字元陣列, 並且從ch5[3]的位置開始貼上
+        for(char element:ch5){
+            System.out.print(element + "\t");
+        }
+        // 12-3-5 擷取"字串"的 子字串 或 字元
+
+        // 12-3-6 字串取代
+        String str9  = "Mjng-Chj Instjtute of Technology";
+        String str10 = "Ming-Chi Institute of Technology";
+        String str11 = "神雕俠侶是楊過與郭襄的故事";
+
+        System.out.println("\nstr9取代前= " + str9);
+        String str9rp = str9.replace('j','i'); //字元j 取代為 i, 取代後不影響原字串
+        System.out.println("str9取代後= " + str9);
+        System.out.println("str9取代後的回傳值= " + str9rp);
+        String str11rp = str11.replace("郭襄", "小龍女");
+        System.out.println("str11取代後= " + str11);
+        System.out.println("str11取代後的回傳值= " + str11rp);
+
+        //移除字串前後的空白、tab、換行符號
+        String str12 = "\t 大俠楊過\t \n";
+        String str12trim = str12.trim(); //移除後不影響原字串
+        System.out.println("str12移除空白後=" + str12);
+        System.out.println("str12移除空白後的回傳值=" + str12trim);
+        // 12-3-6 字串取代
+
+        // 12-3-8 字串比較
+        char[] ch6 = {'明','志','科','技','大','學'};
+        String str13 = new String(ch6);
+        String str14 = new String(ch6);
+
+        System.out.println("使用 str13 == str14 判斷: " + (str13 == str14)); // false, 因為記憶體位置不同
+        System.out.println("使用 str13.equals(str14) 判斷: " + (str13.equals(str14))); //true 只比較字串內容
+
+        //考慮或不考慮 大小寫 比較字串
+        String str15= "A123456";
+        String str16= "a123456";
+        System.out.println("視大小寫不同為相異的比較結果= " + str15.compareTo(str16));           //-32, 根據兩個字串相比看誰得字元順序大決定要回傳>0或<0的數值, 若等於0則表示兩者相等
+        System.out.println("視大小寫不同為相等的比較結果= " + str15.compareToIgnoreCase(str16)); //0
+
+        // startsWith(), endsWith(),  前綴, 後綴
+        String str17 = "Ming-Chi Institute of Technology";
+        System.out.println("前綴是否為Min: " + str17.startsWith("Min")); //true
+        System.out.println("後綴是否為logy: " + str17.endsWith("logy")); //true
+        System.out.println("index3 起前綴是否為Min: " + str17.startsWith("Min", 3)); //false, 從index 3開始比較前綴
+        System.out.println("index3 前綴是否為g-: " + str17.startsWith("g-", 3));     //false, 從index 3開始比較前綴
+        // 12-3-8 字串比較
+
+        // 12-3-9 字串轉換String.valueOf() ==> 可將char, int, long, float, double, boolean型態轉為字串
+        char[] str19 = {'明','志','科','技','大','學'};
+        System.out.println(String.valueOf(str19));                 //明志科技大學
+        String str19vf = String.valueOf(str19, 2,4);    //不影響原字串, 會另外回傳
+        System.out.println(String.valueOf(str19, 2,4)); //科技大學
+        System.out.println(str19vf);                               //科技大學
+        System.out.println("str19轉換後= " + str19[3]);             //技
+        // 12-3-9 字串轉換
+
+        // 12-3-10 字串split ==> 將字串透過分隔符號切為 字串陣列
+        String str20 = "神雕俠侶 是 楊過 與 小龍女 的故事  !"; //驚嘆號前面有兩個空白
+        //System.out.println("str20[2]= " + str20[2]); //在 字串 轉成 字串陣列 之前, 無法用index取得對應字串
+        String[] str20sp = str20.split("\\s"); //透過\s 正規表達式的空白 切割, 但若有連續空白則每一組的第二個空白會被切進陣列之中當成空白的字串
+        System.out.println("str20.split(\\s)切割後= " + str20sp[2]); //楊過
+        for(int i = 0; i < str20sp.length; i++) {
+            System.out.printf("str20sp[%d]= %s, ", i, str20sp[i]);
+        }
+
+
+        // 12-3-10 字串split ==> 將字串透過分隔符號切為 陣列
     }
 }
 
