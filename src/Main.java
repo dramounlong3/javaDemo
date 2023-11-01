@@ -7,7 +7,213 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
+        /* ch1 ~ ch4 */
 
+        byte x1 = 0b111;
+        int y1 = 1_000_000; //當數值很長時可以使用底線做區隔
+        System.out.println("x= " + x1);
+        System.out.println("y= " + y1);
+
+        System.out.printf("int的範圍 %d ~ %d%n", Integer.MIN_VALUE, Integer.MAX_VALUE);
+
+        char ch1 = '\u0041'; //\\u表示 16進制, 以4位數為一組
+        System.out.println("\\u0041 = unicode值65 為字元: " + ch1);
+        final double PI1 = 3.14159;
+
+        int x2 = 100;
+        System.out.printf("x=%10d%n", x2);
+        System.out.printf("x=1234567890%n");
+
+        int x3, y3, z3;
+        x3 = y3 = z3 = 100; //依序由右向左指定
+        System.out.printf("x3= %d, y3= %d, z3= %d", x3, y3, z3);
+
+        int x4, y4, z4;
+        x4 = (y4 = 10) + (z4 = 100);
+        System.out.println("\nx4= " + x4);
+
+        double f = 25.0 / 3.0;
+        System.out.printf("f= %5.2f", f);
+
+        double x5 = Math.pow(2, 3); //2的3次方, 回傳double型態
+        System.out.println("\n" + x5);
+
+        double x6 = 100.0 / 0; //結果的型態會是字串
+        double y6 = -10.0 / 0; //結果的型態會是字串
+        System.out.printf("x6= %s, x6= %s", x6, y6);
+
+        boolean a1 = false;
+        int i1 = 5;
+        // && 和 & 差異在於，若&&運算子左方已經可以確認結果則右方不會執行
+        // && 和 & 差異在於，若&運算子左方已經可以確認結果則右還是會執行
+        System.out.println("\n操作 && 結果= " + (a1 && (i1++ == 5)));
+        System.out.println("i= " + i1); //因為&&右方沒執行所以 i1 = 5
+        System.out.println("操作 & 結果= " + (a1 & (i1++ == 5)));
+        System.out.println("i= " + i1); //因為&右方有執行所以 i1 = 6
+        // ^ (XOR) 一真一假才是真
+        boolean a2 = true;
+        boolean b2 = false;
+        System.out.println("ture ^ true = " + (a2 ^ a2));
+        System.out.println("ture ^ false = " + (a2 ^ b2));
+
+        byte x7, x8;
+        // x7 = 128; //超出byte的最大範圍127, 會報錯
+        // System.out.println("x7= " + x7);
+
+        x8 = 127; //落在byte的範圍內, 所以可以由int轉byte
+        System.out.println("x8= " + x8); //印出來會是10進制
+
+        short a3, b3, c3;
+        a3 = 5;
+        b3 = 5;
+        // c3 = a3 + b3; // 會出錯 int+int 無法變short
+        System.out.println("short min= " + Short.MIN_VALUE);
+
+        //強制型態轉換
+//        int x9 = 7;
+//        int y9 = 2;
+//        double z9;
+//
+//        z9 = x9 / y9;
+//        System.out.println("z9= " + z9); // 3.0
+//        z9 = (double) x9 / y9; //強制轉double 3.5
+//        System.out.println("z9= " + z9);
+//        System.out.println("(int)z9= " + (int) z9); // 3 無條件捨去小數位數
+
+
+        //標準輸出
+//        int x10, y10;
+//        Scanner scanner = new Scanner(System.in);
+//
+//        String str1;
+//        System.out.print("請輸入姓名: ");
+//        str1 = scanner.nextLine(); //接收字串, 若字串含有空白則需以nextLine接受, 若無空白則可單純使用next()接收字串
+//        System.out.printf("姓名是: %s\n", str1);
+//
+//        System.out.print("請輸入兩個整數, 數字間用空白或tab隔開 : " );
+//        x10 = scanner.nextInt(); //接收整數
+//        y10 = scanner.nextInt();
+//        System.out.println("輸入的第一個數字是: " + x10 );
+//        System.out.println("輸入的第二個數字是: " + y10 );
+
+        /* ch1 ~ ch4 */
+
+        /* ch5 */
+        int x11 = 5;
+        switch (x11) {
+            case 0:
+                System.out.println("x11= 0");
+                break;
+            case 5:
+                System.out.println("x11 = 5");
+                break;
+            default:
+                System.out.println("nothing");
+                break;
+        }
+
+        // 迴圈標籤 (讓開發者知道會跳到哪裡)
+        testlable:
+        for (int i = 1; i <= 10; i++) {
+            for (int j = 1; j <= 10; j++) {
+                System.out.print("*");
+                if (j >= i) {
+                    System.out.println(""); //換行
+                    continue testlable; //跳到有testlabe的迴圈處, 也可根據實際需求跳到內層迴圈
+                }
+            }
+        }
+
+        //測試質數
+//        boolean prime = true;
+//        boolean isInt = false;
+//        int num1 = 0;
+//
+//        String tempNum1;
+//        Scanner scanner = new Scanner(System.in);
+//        System.out.print("請輸入要測試是否為質數的數字: ");
+//
+//        tempNum1 = scanner.next(); //先用字串接
+//
+//        //檢測輸入的數字是否是整數, 跟是否>1
+//        while (!isInt) { //判斷是否為整數
+//            try {
+//                num1 = Integer.parseInt(tempNum1); //轉為整數, 若失敗跳到catch重新輸入
+//                if (num1 > 1) { //成功則判斷是否>1, 不是就繼續輸入
+//                    isInt = true;
+//                } else {
+//                    System.out.print("請輸入大於1的正整數: ");
+//                    tempNum1 = scanner.next();
+//                }
+//            } catch (Exception e) {
+//                System.out.print("請輸入正整數: ");
+//                tempNum1 = scanner.next();
+//                isInt = false;
+//            }
+//        }
+//
+//        //檢查是否為質數, 質數 = 只能被1和自己整除
+//        if (num1 == 2)
+//            System.out.printf("%d 是質數", num1);
+//        else {
+//            for (int i = 2; i < num1; i++) {
+//                if (num1 % i == 0) { //被1和自己以外的數字整除時表示不為質數
+//                    System.out.printf("%d 不是質數", num1);
+//                    prime = false;
+//                    break;
+//                }
+//            }
+//            if (prime) {
+//                System.out.printf("%d 是質數", num1);
+//            }
+//        }
+        //測試質數
+        /* ch5 */
+
+        /*ch6*/
+        System.out.printf("Math.pow(-1,1)= %15.14f%n\n", Math.pow(-1,1) ); //15個整數 + 14個小數
+        System.out.printf("Math.pow(-1,2)= %15.14f%n", Math.pow(-1,2) );
+        /*ch6*/
+
+        /*ch8*/
+        //8-6-3 java 方法傳遞 陣列, 物件時 為call by reference
+        SmallMath smallMath1 = new SmallMath();
+        smallMath1.x = 10;
+        smallMath1.y = 20;
+        System.out.printf("轉換前x= %d, y= %d\n",smallMath1.x, smallMath1.y);
+        smallMath1.swap(smallMath1);
+        System.out.printf("轉換後x= %d, y= %d\n",smallMath1.x, smallMath1.y);
+        //8-6-3
+
+        //8-6-5
+        SmallMath smallMath2 = new SmallMath();
+        int[] values = {1,2,3,4,5,6,7,8,9,10};
+        System.out.println(smallMath2.add(1,3,5));
+        System.out.println(smallMath2.add(1,values));
+        //8-6-5
+
+        //8-7-4
+        SmallMath smallMath3 = new SmallMath();
+        smallMath3.printInfo(999);
+        //8-7-4
+
+        // 8-8
+        //匿名陣列 ==> 若只會用到一次, 則可考慮使用匿名陣列
+        int[] data1 = {1,2,3,4,5};                       //未來仍可使用data存取此陣列, 會佔用記憶體資源
+        System.out.println(add(data1));
+        System.out.println(add(new int[] {1,2,3,4,5})); //匿名陣列, 在此宣告後生命週期即立刻結束, 故不會佔用記憶體資源
+        // 8-8
+
+        // 8-9
+        //recursive - factorial
+        System.out.println(factorial(10));
+        // 8-9
+
+        // 8-10-2
+        int discNum = 5;
+        hannoi(discNum,'A','B','C');
+        // 8-10-2
+        /*ch8*/
 
         int[][] arr1 = new int[3][5];
         int num = 1;
@@ -186,16 +392,16 @@ public class Main {
         System.out.println("Nanos= " + dur.toNanos());
 
         // 12-1
-        char ch1 = 'A';
+        char ch1x = 'A';
         char ch2 = '5';
         char chinese = '中'; //中文屬於字母字元, 其餘一律皆否
-        System.out.println("A 是大寫字母: " + Character.isUpperCase(ch1));
-        System.out.println("A 是小寫字母: " + Character.isLowerCase(ch1));
-        System.out.println("A 是字母字元: " + Character.isLetter(ch1));
-        System.out.println("A 是數字字元: " + Character.isDigit(ch1));
+        System.out.println("A 是大寫字母: " + Character.isUpperCase(ch1x));
+        System.out.println("A 是小寫字母: " + Character.isLowerCase(ch1x));
+        System.out.println("A 是字母字元: " + Character.isLetter(ch1x));
+        System.out.println("A 是數字字元: " + Character.isDigit(ch1x));
         System.out.println("5 是數字字元: " + Character.isDigit(ch2));
         System.out.println("5 是字母或數字: " + Character.isLetterOrDigit(ch2));
-        System.out.println("A 是字母或數字: " + Character.isLetterOrDigit(ch1));
+        System.out.println("A 是字母或數字: " + Character.isLetterOrDigit(ch1x));
         System.out.println("中是 字母字元: " + Character.isLetter(chinese));
 
         //測試控制字元
@@ -319,11 +525,206 @@ public class Main {
         for(int i = 0; i < str20sp.length; i++) {
             System.out.printf("str20sp[%d]= %s, ", i, str20sp[i]);
         }
-
-
         // 12-3-10 字串split ==> 將字串透過分隔符號切為 陣列
+
+        // 12-4
+        // String vs StringBuffer vs StringBuilder
+        // 三者皆會配置記憶體
+        // String配置後內容於同一記憶體內不能異動 ===> ex: String str = "ABC" => str = "DEF", 實際上str會指向另外一塊含有"DEF"的新記憶體區塊, 原"ABC"R記憶體區塊則待java清理機制回收
+        // StringBuffer & StringBuilder配置後內容於同一記憶體仍可異動, 如上例, 於同一記憶體區塊內"ABC"會改為"DEF", 且這兩種物件會有緩衝區, 即除了原本的字串長度外, 預設會另外提供16的長度給使用者擴充, 當擴充的文字超過緩衝區容量時 就會改以 原容量*2+2的方式擴充
+        // StringBuffer與StringBuilder的方法完全相同, 差別在於效率 StringBuilder > StringBuffer, 但StringBuilder只能在single thread使用, 若multi thread 都會針對此物件做修改則使用 StringBuffer
+
+        // 12-4-2 StringBuffer
+        String str = "明志科技大學";
+        StringBuffer bstr = new StringBuffer(str);
+        System.out.println("\n字串緩衝區物件內容: " + bstr + "測試");
+        System.out.println("字串緩衝區物件長度: " + bstr.length());      //6
+        System.out.println("字串緩衝區物件容量: " + bstr.capacity());    //6 + 16 = 22
+
+        //更改緩衝區容量
+        bstr.ensureCapacity(10);                       //因比原本的22小, 所以不會變更, 仍然是22
+        System.out.println("字串緩衝區物件容量: " + bstr.capacity());    //22
+        bstr.ensureCapacity(30);                       //變較大時會調整容量, 原容量*2 + 2
+        System.out.println("字串緩衝區物件容量: " + bstr.capacity());    //22 * 2 + 2 = 46
+
+        //更改緩衝區物件長度
+        bstr.setLength(8);
+        System.out.println("字串緩衝區物件內容: " + bstr + "測試");       //明志科技大學  測試, 變長會在後面多null
+        System.out.println("字串緩衝區物件長度: " + bstr.length());      //8
+        System.out.println("字串緩衝區物件容量: " + bstr.capacity());    //22 * 2 + 2 = 46
+        bstr.setLength(4);
+        System.out.println("字串緩衝區物件內容: " + bstr);               //明志科技, 變短字串就會被刪除
+        System.out.println("字串緩衝區物件長度: " + bstr.length());      //4
+        System.out.println("字串緩衝區物件容量: " + bstr.capacity());    //22 * 2 + 2 = 46
+        bstr.append("國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國");
+        System.out.println("字串緩衝區物件內容: " + bstr);               //明志科技國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國國
+        System.out.println("字串緩衝區物件長度: " + bstr.length());      //72
+        System.out.println("字串緩衝區物件容量: " + bstr.capacity());    //46 * 2 + 2 = 94, 當append的字串超過原本的緩衝區時, 會自動放大
+        // 12-4-2
+
+        // 12-4-3
+        String str18 = "Java1";
+        char[] ch7 = {'入','門','邁','向','高','手','之','路'};
+        char[] ch8 = {'王','者','歸','來'};
+        StringBuffer bstr2 = new StringBuffer(str18);
+        bstr2.append('4');                  //Java14                            在最後加上字元
+        bstr2.append(ch8);                  //Java14王者歸來                     在最後加上字元陣列
+        bstr2.insert(6, ch7);         //Java14入門邁向高手之路王者歸來       在index6往後挪 插入 ch7 字元陣列
+        bstr2.deleteCharAt(15);       //Java14入門邁向高手之路王歸來         刪除index15字元
+        bstr2.delete(15, 17);               //Java14入門邁向高手之路王             刪除index 15 ~ 16的連續字元
+        bstr2.append(ch8, 1, 3);  //Java14入門邁向高手之路王者歸來       在最後加上 該字元陣列從index1的地方開始加3個字
+        System.out.println(bstr2);
+
+        // 字串反轉
+        StringBuffer str21 = new StringBuffer("台灣科技大學");
+        System.out.println("字串反轉前: " + str21);
+        str21.reverse();
+        System.out.println("字串反轉後: " + str21);
+        // 12-4-3
+
+        // 12-4-4 字串設定與取代
+        StringBuffer bstr3 = new StringBuffer("Java 10入門邁向高手之路王者歸來");
+        bstr3.setCharAt(6, '4');            //於index6 將字元0改為4
+        bstr3.replace(7,9,"快樂學習");  //於index7-8的文字取代掉, 其餘不變 ==> 入門 取代為 快樂學習
+        System.out.println(bstr3);
+        // 12-4-4 字串設定與取代
+
+        // 12-4-5 複製子字串, 與12-4-4差異在於 此方式會將原本的字元覆蓋掉
+        StringBuffer bstr4 = new StringBuffer("Java 入門邁向高手之路王者歸來");
+        char[] ch10 = {'入','門','徹','底','研','究','之','路'};
+        bstr4.getChars(7, 11, ch10, 2); // 複製 bstr4的index7 ~ 10, 貼到ch10 index2開始的位置
+        System.out.print("ch10: ");
+        for(char i:ch10) {
+            System.out.print(i); //入門邁向高手之路
+        }
+        // 12-4-5 複製子字串
+
+        // 12-6 字串陣列
+        String[] topSchools = new String[3];
+        topSchools[0] = "明志科大";
+        topSchools[1] = "台灣科大";
+        topSchools[2] = "台北科大";
+        System.out.println();
+        for(int i = 0; i<topSchools.length; i++){
+            System.out.println("science and technology university: " + topSchools[i]);
+        }
+
+        //列印出副檔名為java
+        String[] files = {"ch1.docx", "ch2.java", "ch3.xlsx", "ch4.java", "ch5.c"};
+        for(String s:files) {
+            if(s.endsWith("java")) {
+                System.out.println(s);
+            }
+        }
+        // 12-6 字串陣列
+
+        // 12 practice
+        //計算小龍女出現次數
+        String str23 = "小龍女神鵰俠侶是楊過與小龍科女的故事，我喜歡小龍女在古墓的生活片段，小龍女清新脫俗美若天仙。小龍女女小龍小龍女小小小小龍女";
+        //String str23 = "小龍女小龍女";
+        String[] spStr23 = str23.split("");
+        String[] matchStr = {"小","龍","女"};
+        int count = 0, pointer1 = 0, pointer2 = 0, tempCount = 0;
+        //BigO(n)
+        while(pointer1 < str23.length()) {
+            //兩個字元相等
+            if(spStr23[pointer1].equals(matchStr[pointer2])) {
+                tempCount++;
+                if (tempCount == matchStr.length) {
+                    count++;
+                    tempCount=0;
+                }
+                pointer2++;
+                if(pointer2 >= matchStr.length) {
+                    pointer2 = 0;
+                }
+                pointer1++;
+            } //兩個字元不相等時, 但該字元 = 比對字元的第一個字元 需額外處理 ex: 小小龍女 vs 小龍女
+            else if (spStr23[pointer1].equals(matchStr[0])) {
+                tempCount = 0;
+                pointer2 = 0;
+                pointer1++;
+                pointer2++;
+                tempCount++;
+            } //兩個字元不相等
+            else {
+                tempCount = 0;
+                pointer1++;
+                pointer2++;
+                if(pointer2 >= matchStr.length) {
+                    pointer2 = 0;
+                }
+            }
+        }
+        System.out.println("小龍女出現次數: " + count);
+        // 12 practice
     }
+
+    // 8-8 function
+    public static int add(int[] num) {
+        int sum = 0;
+        for(int x: num)
+            sum += x;
+        return sum;
+    }
+    // 8-8 function
+
+    // 8-9 function
+    public static int factorial(int fac) {
+        if(fac == 1 || fac == 0) {
+            return 1;
+        }
+        return fac * factorial(fac - 1);
+    }
+    // 8-9 function
+
+    // 8-10-2 function
+    public static void hannoi(int discNum, char from, char buffer, char to) {
+        if(discNum == 1) {
+            System.out.printf("將碟子從 %C ", from);
+            System.out.printf("移動到 %C \n", to);
+        } else {
+            hannoi(discNum - 1, from, to, buffer);
+            System.out.printf("將碟子從 %C ", from);
+            System.out.printf("移動到 %C \n", to);
+            hannoi(discNum - 1, buffer, from, to);
+        }
+    }
+    // 8-10-2 function
 }
+
+/*ch8*/
+class SmallMath {
+    // 8-6-3
+    public int x, y;
+    void swap(SmallMath B) {
+        int temp = B.x;
+        B.x = B.y;
+        B.y = temp;
+    }
+    // 8-6-3
+
+    // 8-6-5 y為可變參數(本質是陣列), 可接受多個參數
+    int add(int x, int ...y){
+        int total = x;
+        //foreach格式
+        for(int num:y){
+            total += num;
+        }
+        return total;
+    }
+    // 8-6-5
+
+    // 8-7-4
+    int a874 = 10;
+    void printInfo(int a874){
+        System.out.println("local a874= " + a874);
+        System.out.println("member a874= " + this.a874);
+    }
+    // 8-7-4
+
+}
+/*ch8*/
 
 // 9-3-3 靜態成員初始化
 class NBATeam {
