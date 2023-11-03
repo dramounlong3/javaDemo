@@ -658,6 +658,134 @@ public class Main {
         }
         System.out.println("小龍女出現次數: " + count);
         // 12 practice
+
+        // 13-2-1 正規表達式
+        //str.matches(String regex) 回傳str是否符合regex正規表達式 true or false
+        //str.replace() 在str找到所有的para1字串 or para1字元, 全部以para2字串 or para1字元 取代(兩個參數需同類型), 或者是用指定的位置取代(看參數怎麼放)
+        //str.replaceAll(String regex, String replacement)    將str全部符合regex正規表達式的字串用replacement取代
+        //str.replaceFirst(String regex, String replacement)  將str第一個符合regex正規表達式的字串用replacement取代
+
+        //判斷一個字元是否為數字
+        char ch11 = '8';
+        System.out.println("ch11='8' 是否為數字: " + Character.isDigit(ch11)); //true
+
+        //判斷字串是否為1個數字
+        String str24 = "8";
+        System.out.println("str24=\"8\" 是否為1個數字: " + str24.matches("\\d")); //true
+
+        //判斷字串是否為兩個數字
+        String str25 = "88";
+        String str26 = "988";
+        String str27 = "0911-123-123";
+        System.out.println("str25=\"88\" 是否為2個數字: " + str25.matches("\\d\\d")); //true
+        System.out.println("str25=\"88\" 是否為2個數字: " + str25.matches("\\d{2}")); //true  --> 另一種寫法, {2}代表 \\d有幾次
+        System.out.println("str26=\"988\" 是否為2個數字: " + str26.matches("\\d{2}")); //false, 此例有三個數字
+        System.out.println("str27=\"0911-123-123\" 是否為台灣的電話號碼格式: " + str27.matches("\\d{4}-\\d{3}-\\d{3}") ); // - <= 減號非特殊符號, 是在判斷每x位數號碼後是否有 - 的符號
+        System.out.println("str27=\"0911-123-123\" 是否為台灣的電話號碼格式: " + str27.matches("(\\d{4})(-\\d{3})(-\\d{3})") ); //同上, 但是以小括號分組, 讓regex條件更清晰, 若需判斷是否含( 則以 => \\(
+        // 13-2-1 正規表達式
+
+        // 13-2-6 正規表達式 管道 | ==> OR條件
+        //此例可判斷前面2碼的區碼有沒有包含小括號, 都屬於市話
+        String str28 = "02-12345678";
+        String str29 = "(02)-12345678";
+        System.out.println("str28=\"02-12345678\" 是否為市話號碼: " + str28.matches("\\(\\d{2}\\)-\\d{8}|\\d{2}-\\d{8}")); //true
+        System.out.println("str28=\"(02)-12345678\" 是否為市話號碼: " + str29.matches("\\(\\d{2}\\)-\\d{8}|\\d{2}-\\d{8}")); //true
+
+        // 13-2-7 正規表達式 問號 ? ==> 可有可無的文字
+        String str30 = "02-12345678"; //有區碼
+        String str31 = "12345678";    //無區碼
+        String pattern1 = "(\\d{2}-)?\\d{8}"; // 小括號內除可分組之外, 若在後面加上問號 表示這組條件可有可無 ==> 意即: 最前面有無  2數字加減號  都無所謂, 但後面一定要有個數字
+        System.out.println("str30=\"02-12345678\" 是否為市話: " + str30.matches(pattern1));   //true
+        System.out.println("str31=\"12345678\" 是否為市話: " + str31.matches(pattern1));      //true
+
+        // 13-2-8 正規表達式 星號 * ==> 可出現0~多次
+        String str32 = "jhonson";
+        String str33 = "jhonnason";
+        String str34 = "jhonnanananson";
+        String str35 = "jhonxxx";
+        String pattern2 = "jhon(na)*son"; //表示 jhon ... son  中間可以出現 0~多次的na
+        System.out.println("str32=\"jhonson\" 是否符合 jhon(na)*son 條件: " + str32.matches(pattern2));   //true
+        System.out.println("str33=\"jhonnason\" 是否符合 jhon(na)*son 條件: " + str33.matches(pattern2));   //true
+        System.out.println("str34=\"jhonnanananson\" 是否符合 jhon(na)*son 條件: " + str34.matches(pattern2));   //true
+        System.out.println("str35=\"jhonxxx\" 是否符合 jhon(na)*son 條件: " + str35.matches(pattern2));   //false 因為後面沒有jhon後面沒有son
+
+        // 13-2-9 正規表達式 加號 + ==> 可出現1~多次 (最少一次)
+        String str36 = "jhonson";
+        String str37 = "jhonnason";
+        String str38 = "jhonnanananson";
+        String str39 = "jhonxxx";
+        String pattern3 = "jhon(na)+son"; //表示 jhon ... son  中間可以出現 0~多次的na
+        System.out.println("str36=\"jhonson\" 是否符合 jhon(na)+son 條件: " + str36.matches(pattern3));   //false 因為na一次都沒有
+        System.out.println("str37=\"jhonnason\" 是否符合 jhon(na)+son 條件: " + str37.matches(pattern3));   //true
+        System.out.println("str38=\"jhonnanananson\" 是否符合 jhon(na)+son 條件: " + str38.matches(pattern3)); //false, 因為jhon後面出現多次na後 又多了一個n 導致結尾變 nson
+        System.out.println("str39=\"jhonnaxxx\" 是否符合 jhon(na)+son 條件: " + str39.matches(pattern3));   //false 因為後面沒有jhonna後面沒有son
+
+        // 13-2-10 正規表達式 透過大括號 {} 設定比對的次數
+        // 以下X可為 表達式 或 字串
+        // X?        X出現0至1次
+        // X*        X出現0至多次
+        // X+        X出現1至多次
+        // X{n}      X出現n次
+        // X{n,}     X出現n至多次 ==> 實測 逗號後面必須指定數字
+        // X{,m}     X出現0至m次  ==> 實測 逗號前面必須指定數字
+        // X{n,m}    X出現n至m次
+
+        // 特數字元表
+        // .        除換行字元以外的任意字元，但只能代表一個字元
+        // \d       0-9的整數
+        // \D       非0-9的字元
+        // \s       空白、定位、tab、換行、換頁字元
+        // \S       非\s之字元
+        // \w       數字、字母、底線 之字元 即 [A-Za-z0-9_]
+        // \W       非w之字元
+
+        //字元分類
+        // [a-z]        意即 a-z的小寫字元
+        // [A-Z]        意即 A-Z的大寫字元
+        // [aeiouAeiou] 意即 英文的母音字元(大小寫)
+        // [2-5]        意即 2-5的整數
+        // [^a-z]       意即非a-z的字元, 其他依此類推 ^表示反向的意思
+
+        //sample
+        // \\w+         意即 數字、字母、底線 可出現1~多次 ex:wf14w6e54f2f1 符合此條件
+        // John\\w*     意即 前面四個字元一定要是John，後面 數字、字母、底線 可出現0~多次 ex:Johnwef1v7kf_fe 符合此條件
+        // \\d+         意即 1~多次的0-9數字
+        // .ad          意即 ad前面只能有一個非換行字元的任意字元  ex: @ad 符合此條件
+        // .*           意即 非換行字元的萬用字元可出現0~多次 ex: fjwijefiojijfkjkdkfkefev24544e51!@_#_%^%__13 符合此條件
+        // .*apple.*    意即要查詢的文字是否內文有含apple
+
+        // (son){3,5} 相當於如下的正則條件
+        // sonsonson|sonsonsonson|sonsonsonsonson
+        String str40 = "son";
+        String str41 = "sonson";
+        String str42 = "sonsonson";
+        String str43 = "sonsonsonson";
+        String str44 = "sonsonsonsonson";
+        String str45 = "sonsonsonsonsonson";
+        String pattern4 = "(son){3,5}"; //要加小括號, 且此判斷只能有son的字串, 前後或中間都不能有其他字元
+        System.out.println("str40=\"son\" 是否出現3~5次son " + str40.matches(pattern4));                    //false
+        System.out.println("str41=\"sonson\" 是否出現3~5次son " + str41.matches(pattern4));                 //false
+        System.out.println("str42=\"sonsonabcdson\" 是否出現3~5次son " + str42.matches(pattern4));          //true
+        System.out.println("str43=\"sonsonsonson\" 是否出現3~5次son " + str43.matches(pattern4));           //true
+        System.out.println("str44=\"sonsonsononson\" 是否出現3~5次son " + str44.matches(pattern4));         //true
+        System.out.println("str45=\"sonsonsonsonsonsonson\" 是否出現3~5次son " + str45.matches(pattern4));  //false
+
+        // 13-5-1 replaceFirst()
+        String str46 = "Hello! Java! I love Java.";
+        String pattern5 = "Java";
+        System.out.println("str46.replaceFirst()= " + str46.replaceFirst(pattern5, "Python")); //Hello! Python! I love Java 單純只取代指定字串
+        System.out.println("str46原字串= " + str46);                                                       //Hello! Java! I love Java. (源字串不受影響)
+        pattern5 = ".*Java.*";
+        System.out.println("str.replaceFirst()= " +  str46.replaceFirst(pattern5, "Python"));  //Python 含有Java字串的整個字串都會被Python取代
+        System.out.println("str46原字串= " + str46);                                                       //Hello! Java! I love Java. (源字串不受影響)
+
+        // 13-5-2 replaceAll()
+        pattern5 = "Java";
+        System.out.println("str46.replaceAll()= " + str46.replaceAll(pattern5, "Python")); //Hello! Python! I love Python 單純只取代指定字串
+        System.out.println("str46原字串= " + str46);                                                       //Hello! Java! I love Java. (源字串不受影響)
+        pattern5 = ".*Java.*";
+        System.out.println("str.replaceAll()= " +  str46.replaceAll(pattern5, "Python"));  //Python 含有Java字串的整個字串都會被Python取代
+        System.out.println("str46原字串= " + str46);
     }
 
     // 8-8 function
