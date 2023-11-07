@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
@@ -774,18 +776,55 @@ public class Main {
         String str46 = "Hello! Java! I love Java.";
         String pattern5 = "Java";
         System.out.println("str46.replaceFirst()= " + str46.replaceFirst(pattern5, "Python")); //Hello! Python! I love Java 單純只取代指定字串
-        System.out.println("str46原字串= " + str46);                                                       //Hello! Java! I love Java. (源字串不受影響)
+        System.out.println("str46原字串= " + str46);                                                       //Hello! Java! I love Java. (原字串不受影響)
         pattern5 = ".*Java.*";
         System.out.println("str.replaceFirst()= " +  str46.replaceFirst(pattern5, "Python"));  //Python 含有Java字串的整個字串都會被Python取代
-        System.out.println("str46原字串= " + str46);                                                       //Hello! Java! I love Java. (源字串不受影響)
+        System.out.println("str46原字串= " + str46);                                                       //Hello! Java! I love Java. (原字串不受影響)
 
         // 13-5-2 replaceAll()
         pattern5 = "Java";
         System.out.println("str46.replaceAll()= " + str46.replaceAll(pattern5, "Python")); //Hello! Python! I love Python 單純只取代指定字串
-        System.out.println("str46原字串= " + str46);                                                       //Hello! Java! I love Java. (源字串不受影響)
+        System.out.println("str46原字串= " + str46);                                                       //Hello! Java! I love Java. (原字串不受影響)
         pattern5 = ".*Java.*";
         System.out.println("str.replaceAll()= " +  str46.replaceAll(pattern5, "Python"));  //Python 含有Java字串的整個字串都會被Python取代
         System.out.println("str46原字串= " + str46);
+
+        // 13-6-1 正則表達式 基本字串比對
+        String str47 = "0952-001-001";
+        String str48 = "請撥打 0952-001-001 與之聯繫";
+        String pattern6 = "\\d{4}-\\d{3}-\\d{3}";
+        String pattern7 = ".*\\d{4}-\\d{3}-\\d{3}.*";
+        System.out.println("str47=\"0952-001-001\" 是否符合pattern: \\\\d{4}-\\\\d{3}-\\\\d{3} " + Pattern.matches(pattern6, str47));                       //true
+        System.out.println("str48=\"請撥打 0952-001-001 與之聯繫\" 是否符合pattern: \\\\d{4}-\\\\d{3}-\\\\d{3} " + Pattern.matches(pattern6, str48));       //false, 因為前後有其他字元
+        System.out.println("str47=\"0952-001-001\" 是否符合pattern: .*\\\\d{4}-\\\\d{3}-\\\\d{3}.* " + Pattern.matches(pattern7, str47));                   //true
+        System.out.println("str48=\"請撥打 0952-001-001 與之聯繫\" 是否符合pattern: .*\\\\d{4}-\\\\d{3}-\\\\d{3}.* " + Pattern.matches(pattern7, str48));   //true
+
+        // 13-6-2 正則表達式 字串搜尋
+        String msg = "Please call my secretary using 0930-939-939 or 0952-001-008, thank you!";
+        String pattern8 = "\\d{4}-\\d{3}-\\d{3}";
+        Pattern p = Pattern.compile(pattern8);          //編譯正則表達式
+        Matcher m = p.matcher(msg);
+
+        // find傳回true後, 表示有找到, 且group(), start(), end() 會記錄本次找到對應的值, 最終超出範圍時則會斷開迴圈
+        while(m.find()) {
+            System.out.println(m.group() + " 字串找到了, 起始索引是 " + m.start() + " 終止索引是 " + m.end());
+        }
+
+        // 13-6-3 正則表達式 字串取代
+        String str49 = "CIA Mark told CIA Linda that secret USB had given to CIA Peter.";
+        String pattern9 = "CIA \\w*"; //找到CIA 後的連續字串符合 a-zA-Z0-9_ 的字串 並將其取代為**   (因為\\w後面有* 表示連續的0~多個)
+
+        String replaceStr = "C*A **";
+        Pattern p2 = Pattern.compile(pattern9);
+        Matcher m2 = p2.matcher(str49);
+        System.out.println(m2.replaceFirst(replaceStr)); //C*A ** told CIA Linda that secret USB had given to CIA Peter.
+        System.out.println(m2.replaceAll(replaceStr));   //C*A ** told C*A ** that secret USB had given to C*A **.
+
+        String pattern10 = "CIA \\w"; //找到CIA 後的第一個字串符合 a-zA-Z0-9_ 的字串 並將其取代為** (因為\\w後面沒有* 表示1個) ==> 故本次取代是第一個字母 變成 兩個 星號
+        Pattern p3 = Pattern.compile(pattern10);
+        Matcher m3 = p3.matcher(str49);
+        System.out.println(m3.replaceFirst(replaceStr)); //C*A **ark told CIA Linda that secret USB had given to CIA Peter.
+        System.out.println(m3.replaceAll(replaceStr));   //C*A **ark told C*A **inda that secret USB had given to C*A **eter.
     }
 
     // 8-8 function
