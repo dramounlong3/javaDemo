@@ -825,6 +825,14 @@ public class Main {
         Matcher m3 = p3.matcher(str49);
         System.out.println(m3.replaceFirst(replaceStr)); //C*A **ark told CIA Linda that secret USB had given to CIA Peter.
         System.out.println(m3.replaceAll(replaceStr));   //C*A **ark told C*A **inda that secret USB had given to C*A **eter.
+        // 13
+
+        // ch14 14 繼承
+        // 14-1-11 父子類別擁有相同成員變數名稱
+        Son son1 = new Son();
+        son1.printInfo();
+        // 14-1-11 父子類別擁有相同成員變數名稱
+
     }
 
     // 8-8 function
@@ -969,3 +977,17 @@ class Foo {
     }
 }
 // 9-3-3-*
+
+// 14-1-11
+class Father {
+    protected int x = 50;
+}
+
+class Son extends Father{
+    protected int x = 100;
+    public void printInfo() {
+        System.out.println("列印父類別 super.x= " + super.x);
+        System.out.println("列印 x= " + x);
+    }
+}
+// 14-1-11
