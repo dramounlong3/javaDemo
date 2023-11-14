@@ -831,7 +831,54 @@ public class Main {
         // 14-1-11 父子類別擁有相同成員變數名稱
         Son son1 = new Son();
         son1.printInfo();
-        // 14-1-11 父子類別擁有相同成員變數名稱
+
+        // 14-2-1 IS-A (繼承), HAS-A (聚合, 組合)
+        //可以判斷 ObjectA 是否屬於某一種 ObjectB，換言之可判斷ObjectA是否有繼承ObjectB
+        Fish fish = new Fish();
+        Bird bird = new Bird();
+        Eagle eagle = new Eagle();
+        System.out.println("fish is animal? => " + (fish instanceof Animal));   // true
+        System.out.println("bird is animal? => " + (bird instanceof Animal));   // true
+        // System.out.println("bird is plant? => " + (bird instanceof Plant));  // false --> 實測會報錯
+        System.out.println("eagle is animal? => " + (eagle instanceof Animal)); // true
+        System.out.println("eagle is animal? => " + (eagle instanceof Bird));   // true
+
+        // 14-3 java class分檔案
+        HomeTown homeTown = new HomeTown("徐州","江蘇", "中國");
+        Employee employee = new Employee(10, 29, 'F', "周佳", homeTown);
+        employee.printInfo();
+
+        // 14-4-6 override
+        Creature creature = new Creature();
+        Cat cat = new Cat();
+        creature.moving();
+        cat.moving();
+
+        // 14-6-1 編譯時期多型(靜態多形)、執行時期多形(動態多型)
+        //1.編譯時期多型(靜態多形) ==> 編譯時決定的多形，即為一般常用的多形，可以透過參數型態...等 重新定義父類別方法
+        //2.執行時期多形(動態多型) ==> 執行時決定的多形，有向上和向下轉型的差別
+
+        // 靜態多形
+        Cat1 cat1 = new Cat1();
+        cat1.moving();
+        cat1.moving("貓可以跳");
+        cat1.moving("跳得很高", "Hally");
+
+        // 動態多形 需滿足1.繼承關係 2.子類別有Override父類別的方法 3.父類別變數 參考到 子類別物件(如下的宣告方式) ==> 故父類別必須要先有該方法才可以被此轉型變數呼叫
+        Animal1 animal1 = new Cat1(); //宣告Animal1的變數, 但本質是Cat1, 故Cat1向上轉型為Animal1
+        animal1.moving(); //貓也可以活動 會呼叫Cat1的moving
+
+        Animal1 animal2 = new Cat1();
+        Animal1 animal3 = new Animal1(); //正常宣告, 無法向下轉型
+        Cat1 cat1d = (Cat1) animal2;     //需強轉型 ===> animal2(本質是Cat1)向下轉型為Cat1
+        //Cat1 cat2d = (Cat1) animal3;   //向下轉型會失敗
+        cat1d.moving();                  //貓也可以活動 call Cat1的moving
+        //cat2d.moving();
+
+        //靜態綁定 ==> overload
+        //動態綁定 ==> override
+
+        // ch14 14 繼承
 
     }
 
@@ -991,3 +1038,51 @@ class Son extends Father{
     }
 }
 // 14-1-11
+
+// 14-2-1
+class Animal {}
+class Plant {}
+class Fish extends Animal {}
+class Bird extends Animal {}
+class Eagle extends Bird {}
+// 14-2-1
+
+// 14-4-6 override
+class Creature {
+    public void moving() {
+        System.out.println("生物可以移動");
+    }
+}
+
+class Cat extends Creature{
+    @Override //不加override也沒關係, 但建議增加
+    public void moving() {
+        System.out.println("貓可以跳得很高");
+    }
+}
+// 14-4-6 override
+
+// 14-6-1 overload
+class Animal1 {
+    public void moving() {
+        System.out.println("動物可以活動");
+    }
+}
+class Cat1 extends Animal1{
+
+    @Override //重新定義父類別的moving
+    public void moving() {
+        System.out.println("貓也可以活動");
+    }
+
+    // 多載moving(overload, polymorphism)
+    public void moving(String msg) {
+        System.out.println(msg);
+    }
+
+    // 多載moving(overload, polymorphism)
+    public void moving(String msg, String name) {
+        System.out.println(name + " 的貓可以 " + msg);
+    }
+}
+// 14-6-1 overload
