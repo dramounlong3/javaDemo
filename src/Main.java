@@ -878,6 +878,32 @@ public class Main {
         //靜態綁定 ==> overload
         //動態綁定 ==> override
 
+        // 14-8-1 巢狀類別(Nested classes)有三種: 1.內部類別(inner class), 2.方法類部內別(Method-local inner class), 3.匿名內部類別(Anonymous inner class)
+        // 1.inner class
+        School school = new School();       //建立外部類別實例
+        School.Mis mis = school.new Mis();  //建立內部類別實例   School.Mis mis = School.new Mis()  ==> 用類別建立會錯誤
+        System.out.println("inner class 學生人數: " + mis.getStudentNum());
+
+        // 2.method-local inner class
+        School1 school1 = new School1();
+        school1.college();
+
+        // 3.Anonymous class
+        School3 school3 = new School3() {
+            final int students = 10000;
+            public void getStudentNum() {
+                System.out.println("anonymous1 class 學生總人數: " + students);
+            }
+        };
+        school3.getStudentNum();//由上方先建立匿名類別物件變數後再呼叫
+        new School3() {
+            final int students = 10000;
+            //方法名稱不一定要和School3一樣, 可以當作新的class撰寫
+            public void getStudentNum123() {
+                System.out.println("anonymous2 class 學生總人數: " + students);
+            }
+        }.getStudentNum123(); //直接由匿名類別呼叫, 如果只呼叫一次可以這麼做, 省建立一個物件
+
         // ch14 14 繼承
 
     }
@@ -1086,3 +1112,41 @@ class Cat1 extends Animal1{
     }
 }
 // 14-6-1 overload
+
+// 14-8-1
+class School {
+    int students = 10000;
+    class Mis {
+        int students_mis = 300;
+        public int getStudentNum() {
+            return students_mis;
+        }
+    }
+}
+// 14-8-1
+
+// 14-8-2
+class School1 {
+    public void college() {
+        int students = 10000;
+        class Mis {
+            int students_mis = 400;
+            public int getStudentNum() {
+                return students_mis;
+            }
+        }
+
+        Mis mis = new Mis();
+        System.out.println("method class 學生人數: " + mis.getStudentNum());
+    }
+}
+// 14-8-2
+
+// 14-8-3
+class School3 {
+    int students = 10000;
+    public void getStudentNum() {
+        System.out.println("學生總人數: " + students);
+    }
+}
+// 14-8-3
