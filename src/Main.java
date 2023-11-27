@@ -1,4 +1,5 @@
 import myMath.CalAdd;
+import myMath.CalMul;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -910,9 +911,14 @@ public class Main {
 
         // ch19 package 套件
             //若於上方使用import myMath.CalAdd; (import package.class) 則此處可以省略myMath
-            CalAdd calAdd = new CalAdd();
-            int ps1 = calAdd.add(5, 88);
-            System.out.println("呼叫package: myMath.calAdd(5, 88): " + ps1);
+        CalAdd calAdd = new CalAdd();
+        int ps1 = calAdd.add(5, 88);
+        System.out.println("呼叫package: myMath.CalAdd.add(5, 88): " + ps1);
+
+        //myMath套件底下的另一個類別
+        CalMul calMul = new CalMul();
+        int ps2 = calMul.mul(3, 2);
+        System.out.println("呼叫package: myMath.CalMul.mul(3, 2): " + ps2);
         // ch19 package 套件
     }
 
