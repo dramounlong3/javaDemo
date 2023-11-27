@@ -1,3 +1,5 @@
+import myMath.CalAdd;
+
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -906,6 +908,12 @@ public class Main {
 
         // ch14 14 繼承
 
+        // ch19 package 套件
+            //若於上方使用import myMath.CalAdd; (import package.class) 則此處可以省略myMath
+            CalAdd calAdd = new CalAdd();
+            int ps1 = calAdd.add(5, 88);
+            System.out.println("呼叫package: myMath.calAdd(5, 88): " + ps1);
+        // ch19 package 套件
     }
 
     // 8-8 function
