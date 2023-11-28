@@ -1,10 +1,13 @@
 import myMath.CalAdd;
 import myMath.CalMul;
+import myMath.subMath.CalSub;
+//import myMath.* ===> 不包含 myMath.subMath.* 若用*載入, 則子套件需要額外載入
 
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.InputMismatchException;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -919,7 +922,35 @@ public class Main {
         CalMul calMul = new CalMul();
         int ps2 = calMul.mul(3, 2);
         System.out.println("呼叫package: myMath.CalMul.mul(3, 2): " + ps2);
+
+        //子套件
+        CalSub calSub = new CalSub();
+        int ps3 = calSub.subtract(99, 100);
+        System.out.println("package: myMath.subMath.CalSub.subtract(99, 100): " + ps3);
+
+        //修飾子存取權限
+        // public:          所有地方皆可使用
+        // protected:       本身、同一個套件 或 子類別 可使用
+        // (no modifier):   本身、同一個套件 可使用
+        // private:         本身 可以使用
         // ch19 package 套件
+
+        // ch20 異常處理
+        int x9, x10;
+        Scanner scanner1 = new Scanner(System.in);
+        System.out.println("請輸入兩個整數, 數字間請用空白隔開");
+        try {
+            x9 = scanner1.nextInt();
+            x10 = scanner1.nextInt();
+            System.out.println(x9 + " / " + x10 + " 的結果是: " + (x9 / x10));
+        } catch (ArithmeticException | InputMismatchException e) { // | 代表 or 的意思
+            System.out.println("輸入錯誤: " + e);
+        } catch (RuntimeException e) {
+            System.out.println("程式發生runtime異常");
+        } finally {
+            System.out.println("無論前面發生什麼事此段都會執行");
+        }
+        System.out.println("try catch結束");
     }
 
     // 8-8 function
