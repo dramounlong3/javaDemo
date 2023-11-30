@@ -936,21 +936,28 @@ public class Main {
         // ch19 package 套件
 
         // ch20 異常處理
-        int x9, x10;
-        Scanner scanner1 = new Scanner(System.in);
-        System.out.println("請輸入兩個整數, 數字間請用空白隔開");
-        try {
-            x9 = scanner1.nextInt();
-            x10 = scanner1.nextInt();
-            System.out.println(x9 + " / " + x10 + " 的結果是: " + (x9 / x10));
-        } catch (ArithmeticException | InputMismatchException e) { // | 代表 or 的意思
-            System.out.println("輸入錯誤: " + e);
-        } catch (RuntimeException e) {
-            System.out.println("程式發生runtime異常");
-        } finally {
-            System.out.println("無論前面發生什麼事此段都會執行");
+//        int x9, x10;
+//        Scanner scanner1 = new Scanner(System.in);
+//        System.out.println("請輸入兩個整數, 數字間請用空白隔開");
+//        try {
+//            x9 = scanner1.nextInt();
+//            x10 = scanner1.nextInt();
+//            System.out.println(x9 + " / " + x10 + " 的結果是: " + (x9 / x10));
+//        } catch (ArithmeticException | InputMismatchException e) { // | 代表 or 的意思
+//            System.out.println("輸入錯誤: " + e);
+//        } catch (RuntimeException e) {
+//            System.out.println("程式發生runtime異常");
+//        } finally {
+//            System.out.println("無論前面發生什麼事此段都會執行");
+//        }
+//        System.out.println("try catch結束");
+        // 20-8 自行拋出異常throw
+
+        String[] arr2 = {"123456","123456789","1234567"};
+        for(int i = 0; i < arr2.length; i++){
+            chk_pwd_length(arr2[i]);
         }
-        System.out.println("try catch結束");
+        // ch20 異常處理
     }
 
     // 8-8 function
@@ -984,6 +991,18 @@ public class Main {
         }
     }
     // 8-10-2 function
+
+    // 20-8 function
+    public static void chk_pwd_length(String str) {
+        if(str.length() < 6 || str.length() > 8) {
+            System.out.println("密碼長度失敗: " + str);
+            throw new ArrayIndexOutOfBoundsException("密碼長度小於6 或 大於8"); //第二次拋出異常時, 後續就不會執行了
+        } else {
+            System.out.println("密碼長度成功: " + str);
+        }
+    }
+    // 20-8 function
+
 }
 
 /*ch8*/
