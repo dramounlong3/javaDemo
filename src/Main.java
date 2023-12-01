@@ -3,6 +3,7 @@ import myMath.CalMul;
 import myMath.subMath.CalSub;
 //import myMath.* ===> 不包含 myMath.subMath.* 若用*載入, 則子套件需要額外載入
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -936,6 +937,7 @@ public class Main {
         // ch19 package 套件
 
         // ch20 異常處理
+        // 20-4 多個catch, finally的應用
 //        int x9, x10;
 //        Scanner scanner1 = new Scanner(System.in);
 //        System.out.println("請輸入兩個整數, 數字間請用空白隔開");
@@ -948,16 +950,61 @@ public class Main {
 //        } catch (RuntimeException e) {
 //            System.out.println("程式發生runtime異常");
 //        } finally {
-//            System.out.println("無論前面發生什麼事此段都會執行");
+//            System.out.println("無論前面發生什麼事此段都會執行, 即使前面有return 也會先執行finally再return");
 //        }
 //        System.out.println("try catch結束");
-        // 20-8 自行拋出異常throw
 
+        // 20-8 自行拋出異常throw
         String[] arr2 = {"123456","123456789","1234567"};
-        for(int i = 0; i < arr2.length; i++){
-            chk_pwd_length(arr2[i]);
+        for (int i = 0; i < arr2.length; i++){
+            try {
+                chk_pwd_length(arr2[i]);
+            } catch(StringIndexOutOfBoundsException e) {
+                System.out.println("error! " + e);
+                e.printStackTrace(); //回朔顯示異常, 會在所有程式都執行完才印出於console, 如下
+                // java.lang.StringIndexOutOfBoundsException: 密碼長度小於6 或 大於8
+                // at Main.chk_pwd_length(Main.java:1017)
+                // at Main.main(Main.java:961)
+            }
+        }
+
+        // 20-9 class.function throws
+        for (int i = 0; i < 2; i++) {
+            try {
+                MyThrows myThrows = new MyThrows();
+                myThrows.myMethod(i);
+            } catch (IOException | ClassNotFoundException e){ //處理的exception class必須涵蓋方法拋出的類別
+                System.out.println(e.getMessage());
+            }
+        }
+
+        // 20-10
+        MyBank myBank = new MyBank();
+        System.out.println("存入1000元");
+        myBank.deposit(1000);
+        try {
+            System.out.println("提款500元");
+            myBank.withdraw(500);
+            System.out.println("提款600元");
+            myBank.withdraw(600);
+        } catch (NotEnoughException e) {
+            System.out.println("存款金額不足: " + e.getShortAmount());
+            e.printStackTrace();
+            // NotEnoughException
+            // at MyBank.withdraw(Main.java:1287)
+            // at Main.main(Main.java:989)
         }
         // ch20 異常處理
+
+        // ch21 執行緒(thread)
+        // 預設執行緒 main
+        Thread thread = Thread.currentThread(); //建立目前執行緒的物件
+        System.out.println("目前執行緒的名稱: " + thread.getName());    //main
+        thread.setName("MyThread");   //設定執行緒名稱
+        System.out.println("修改名稱後的執行緒名稱: " + thread.getName()); //MyThread
+        System.out.println("目前執行緒ID: " + thread.getId());   // 1
+
+        // ch21 執行續(thread)
     }
 
     // 8-8 function
@@ -992,17 +1039,16 @@ public class Main {
     }
     // 8-10-2 function
 
-    // 20-8 function
-    public static void chk_pwd_length(String str) {
+    // 20-8 function 若呼叫端屬於同一個class，方法簽章後有無加上throws exception類別，不會造成編譯時crash，但此方法若未於其他類別內則需於function後加上throws exception類別
+    public static void chk_pwd_length(String str) throws StringIndexOutOfBoundsException {
         if(str.length() < 6 || str.length() > 8) {
             System.out.println("密碼長度失敗: " + str);
-            throw new ArrayIndexOutOfBoundsException("密碼長度小於6 或 大於8"); //第二次拋出異常時, 後續就不會執行了
+            throw new StringIndexOutOfBoundsException("密碼長度小於6 或 大於8"); //第二次拋出異常時, 後續就不會執行了
         } else {
             System.out.println("密碼長度成功: " + str);
         }
     }
     // 20-8 function
-
 }
 
 /*ch8*/
@@ -1214,3 +1260,47 @@ class School3 {
     }
 }
 // 14-8-3
+
+// 20-9
+class MyThrows {
+    //類別 或 方法 拋出異常時，需於方法簽章後事先加上有哪些類型的異常可能會拋出(只能多不能少)
+    void myMethod(int n) throws IOException, ClassNotFoundException {
+        if (n == 1) {
+          throw new IOException("IOException發生");
+        } else {
+          throw new ClassNotFoundException("ClassNotFoundException發生");
+          // throw  new ArrayIndexOutOfBoundsException("ERROR");
+        }
+    }
+}
+// 20-9
+
+// 20-10 自訂異常類別, 因所有的runtime exception都是繼承於exception, 所以自訂的也需繼承此類別
+class NotEnoughException extends Exception{
+    private int shortAmount;
+    public NotEnoughException(int shortAmount) {
+        this.shortAmount = shortAmount;
+    }
+    public int getShortAmount() {
+        return this.shortAmount;
+    }
+}
+
+class MyBank {
+    private int balance;
+    public void deposit(int cash_in) {
+        this.balance += cash_in;
+    }
+    public void withdraw(int cash_out) throws NotEnoughException{
+        if(cash_out <= balance) {
+            this.balance -= cash_out;
+        } else {
+            int shortA = cash_out - balance; //計算短缺金額
+            throw new NotEnoughException(shortA);
+        }
+    }
+    public int getBalance() {
+        return this.balance;
+    }
+}
+// 20-10 自訂異常類別, 因所有的runtime exception都是繼承於exception, 所以自訂的也需繼承此類別
