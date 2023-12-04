@@ -989,7 +989,7 @@ public class Main {
             myBank.withdraw(600);
         } catch (NotEnoughException e) {
             System.out.println("存款金額不足: " + e.getShortAmount());
-            e.printStackTrace();
+            // e.printStackTrace(); //註解 避免影響輸出結果過於雜亂
             // NotEnoughException
             // at MyBank.withdraw(Main.java:1287)
             // at Main.main(Main.java:989)
@@ -1004,7 +1004,28 @@ public class Main {
         System.out.println("修改名稱後的執行緒名稱: " + thread.getName()); //MyThread
         System.out.println("目前執行緒ID: " + thread.getId());   // 1
 
-        // ch21 執行續(thread)
+        // 21-11-4 執行緒未同步
+        Demo demo = new Demo();
+        JobThread1 jobThread1 = new JobThread1(demo);
+        JobThread2 jobThread2 = new JobThread2(demo);
+        jobThread1.start(); //共用的資源 jobThread1 和 jobThread2 會混著執行(順序不一定)
+        jobThread2.start();
+
+        // 21-11-5 執行緒同步 Synchronization
+        DemoSync demoSync = new DemoSync();
+        JobThreadSync1 jobThreadSync1 = new JobThreadSync1(demoSync);
+        JobThreadSync2 jobThreadSync2 = new JobThreadSync2(demoSync);
+        jobThreadSync1.start(); // 共用的資源  一定是jobThreadSync1執行完才執行jobThreadSync2
+        jobThreadSync2.start();
+
+        // 21-13 執行緒 同步區塊
+        DemoSyncBlock demoSyncBlock = new DemoSyncBlock();
+        JobThreadSyncBlock1 jobThreadSyncBlock1 = new JobThreadSyncBlock1(demoSyncBlock);
+        JobThreadSyncBlock2 jobThreadSyncBlock2 = new JobThreadSyncBlock2(demoSyncBlock);
+        jobThreadSyncBlock1.start(); // 共用的資源 一定是jobThreadSync1執行完才執行jobThreadSync2, 同21-11-5的結果
+        jobThreadSyncBlock2.start();
+
+        // ch21 執行緒(thread)
     }
 
     // 8-8 function
@@ -1304,3 +1325,112 @@ class MyBank {
     }
 }
 // 20-10 自訂異常類別, 因所有的runtime exception都是繼承於exception, 所以自訂的也需繼承此類別
+
+// 21-11-4 執行緒未同步
+class Demo {
+    public void printDemo(int n) {
+        for (int i = 1; i <= 5; i++) {
+            try {
+                Thread.sleep(500); //必須有try catch處理才能使用Thread.sleep, 讓執行緒同步時更可以隨機交互執行
+                System.out.println("輸出: " + (i * n));
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+    }
+}
+
+class JobThread1 extends Thread {
+    Demo demo;
+    JobThread1(Demo demo) {
+        this.demo = demo;
+    }
+    public void run() {
+        this.demo.printDemo(10);
+    }
+}
+
+class JobThread2 extends Thread {
+    Demo demo;
+    JobThread2(Demo demo) {
+        this.demo = demo;
+    }
+    public void run() {
+        this.demo.printDemo(100);
+    }
+}
+// 21-11-4 執行緒未同步
+
+// 21-11-5 執行緒同步
+class DemoSync {
+    public synchronized void printDemo(int n) { //方法加上同步的關鍵字
+        try {
+            for (int i = 1; i <= 5; i++) {
+                Thread.sleep(500);
+                System.out.println("sync輸出: " + (i * n * 100));
+            }
+        } catch(Exception e) {
+            System.out.println(e);
+        }
+    }
+}
+
+
+class JobThreadSync1 extends Thread {
+    DemoSync demoSync;
+    JobThreadSync1(DemoSync demoSync) {
+        this.demoSync = demoSync;
+    }
+    public void run() {
+        this.demoSync.printDemo(10);
+    }
+}
+
+class JobThreadSync2 extends Thread {
+    DemoSync demoSync;
+    JobThreadSync2(DemoSync demoSync) {
+        this.demoSync = demoSync;
+    }
+    public void run() {
+        this.demoSync.printDemo(100);
+    }
+}
+// 21-11-5 執行緒同步
+
+// 21-11-13 執行緒同步區塊
+class DemoSyncBlock {
+    public void printDemo(int n) {  //非同步方法
+        synchronized (this) {       //同步區塊
+            try {
+                for (int i = 1; i <= 5; i++) {
+                    Thread.sleep(500);
+                    System.out.println("sync輸出: " + (i * n * 10000));
+                }
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+    }
+}
+
+
+class JobThreadSyncBlock1 extends Thread {
+    DemoSyncBlock demoSyncBlock;
+    JobThreadSyncBlock1(DemoSyncBlock demoSyncBlock) {
+        this.demoSyncBlock = demoSyncBlock;
+    }
+    public void run() {
+        this.demoSyncBlock.printDemo(10);
+    }
+}
+
+class JobThreadSyncBlock2 extends Thread {
+    DemoSyncBlock demoSyncBlock;
+    JobThreadSyncBlock2(DemoSyncBlock demoSyncBlock) {
+        this.demoSyncBlock = demoSyncBlock;
+    }
+    public void run() {
+        this.demoSyncBlock.printDemo(100);
+    }
+}
+// 21-11-5 執行緒同步區塊
