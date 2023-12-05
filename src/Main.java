@@ -1,3 +1,4 @@
+import jdk.jshell.spi.ExecutionControlProvider;
 import myMath.CalAdd;
 import myMath.CalMul;
 import myMath.subMath.CalSub;
@@ -961,7 +962,7 @@ public class Main {
                 chk_pwd_length(arr2[i]);
             } catch(StringIndexOutOfBoundsException e) {
                 System.out.println("error! " + e);
-                e.printStackTrace(); //回朔顯示異常, 會在所有程式都執行完才印出於console, 如下
+                // e.printStackTrace(); //回朔顯示異常, 會在所有程式都執行完才印出於console, 如下
                 // java.lang.StringIndexOutOfBoundsException: 密碼長度小於6 或 大於8
                 // at Main.chk_pwd_length(Main.java:1017)
                 // at Main.main(Main.java:961)
@@ -1008,22 +1009,89 @@ public class Main {
         Demo demo = new Demo();
         JobThread1 jobThread1 = new JobThread1(demo);
         JobThread2 jobThread2 = new JobThread2(demo);
-        jobThread1.start(); //共用的資源 jobThread1 和 jobThread2 會混著執行(順序不一定)
+        jobThread1.start(); //共用的資源(Demo demo) jobThread1 和 jobThread2 會混著執行(順序不一定)
         jobThread2.start();
 
         // 21-11-5 執行緒同步 Synchronization
         DemoSync demoSync = new DemoSync();
         JobThreadSync1 jobThreadSync1 = new JobThreadSync1(demoSync);
         JobThreadSync2 jobThreadSync2 = new JobThreadSync2(demoSync);
-        jobThreadSync1.start(); // 共用的資源  一定是jobThreadSync1執行完才執行jobThreadSync2
+        jobThreadSync1.start(); // 共用的資源(Demo demo)  一定是jobThreadSync1執行完才執行jobThreadSync2
         jobThreadSync2.start();
 
-        // 21-13 執行緒 同步區塊
+        // 21-13 執行緒 同步區塊 Synchronized block
         DemoSyncBlock demoSyncBlock = new DemoSyncBlock();
         JobThreadSyncBlock1 jobThreadSyncBlock1 = new JobThreadSyncBlock1(demoSyncBlock);
         JobThreadSyncBlock2 jobThreadSyncBlock2 = new JobThreadSyncBlock2(demoSyncBlock);
-        jobThreadSyncBlock1.start(); // 共用的資源 一定是jobThreadSync1執行完才執行jobThreadSync2, 同21-11-5的結果
+        jobThreadSyncBlock1.start(); // 共用的資源(Demo demo)  一定是jobThreadSync1執行完才執行jobThreadSync2, 同21-11-5的結果
         jobThreadSyncBlock2.start();
+
+        // 21-15 執行緒 死結 deadlock
+        String str50 = "Account";   //資源1
+        String str51 = "Password";  //資源2
+
+        // 匿名類別
+        Thread thread1 = new Thread() {
+            public void run() {
+                synchronized (str50) {  //同步區塊 鎖住資源1: str50
+                    System.out.println("執行緒1: 鎖住資源1 str50: Account");
+                    try {
+                        Thread.sleep(300);
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
+                    synchronized (str51) {  //同步區塊 鎖住資源2: str51 ===> 當執行緒1 睡3秒後要鎖住str51時, 此時執行緒2 三秒前已經鎖住str51, 導致互相卡住
+                        System.out.println("執行緒1: 鎖住資源 str51: Password");
+                    }
+                }
+            }
+        };
+
+        // 匿名類別
+        Thread thread2 = new Thread() {
+            public void run() {
+                synchronized (str51) {  //同步區塊 鎖住資源2: str51
+                    System.out.println("執行緒2: 鎖住資源2 str51: Password");
+                    try {
+                        Thread.sleep(300);
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
+                      //此段先註解避免, 資源互鎖, 需強制中斷程式
+//                    synchronized (str50) {  //同步區塊 鎖住資源1: str50 ===> 當執行緒2 睡3秒後要鎖住str50時, 此時執行緒1 三秒前已經鎖住str50 , 導致互相卡住
+//                        System.out.println("執行緒2: 鎖住資源1 str50: Account");
+//                    }
+                }
+            }
+        };
+        thread1.start();
+        thread2.start();
+
+        // 21-16 執行緒內部通信 inter-thread communication
+        //wait(): 讓現在的執行緒放鎖, 或者是等待時間到後再鎖住
+        //notify(): 喚醒等待的執行緒, 若有多個則選擇其中一個喚醒
+        //notifyAll(): 喚醒所有等待的執行緒
+        Bank bank = new Bank();
+        Thread thread3 = new Thread() {
+            public void run() {
+                bank.withdraw(15000); //領取15000, 但餘額只有10000
+            }
+        };
+        Thread thread4 = new Thread() {
+            public void run() {
+                bank.deposit(10000); //存款10000, 使餘額為25000
+            }
+        };
+        thread3.start();
+        thread4.start();
+
+        // 21-16 執行緒內部通信 生產消費問題
+        Factory factory = new Factory();
+        Producer producer = new Producer(factory);
+        Consumer consumer = new Consumer(factory);
+        producer.start();   //藉由Producer呼叫Factory內的生產方法
+        consumer.start();   //藉由Consumer呼叫Factory內的消費方法
+        //以上兩種方法會互相等待與通知, 因為鎖定的是同一項物件(Factory factory)
 
         // ch21 執行緒(thread)
     }
@@ -1434,3 +1502,105 @@ class JobThreadSyncBlock2 extends Thread {
     }
 }
 // 21-11-5 執行緒同步區塊
+
+// 21-16 執行緒內部通信
+class Bank {
+    private int balance = 10000;
+    public synchronized void withdraw(int amount) {
+        System.out.println("取款金額: " + amount);
+        while(this.balance < amount) {
+            System.out.println("餘額不足, 目前餘額: " + this.balance);
+            try{
+                wait(); //存款不足時, 需等待
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+        this.balance -= amount;
+        System.out.println("取款完成, 取款後餘額: " + this.balance);
+    }
+
+    public synchronized void deposit(int amount) {
+        System.out.println("存款金額: " + amount);
+        this.balance += amount;
+        System.out.println("存款完成, 存款後餘額: " + this.balance);
+        notify();
+    }
+}
+// 21-16 執行緒內部通信
+
+// 21-16 執行緒內部通信 生產消費問題
+class Factory {
+    private int product;    //產品用編號代替之
+    private boolean empty = true;   //庫存是否為空
+    public synchronized void produce(int newProduct) {
+        while(!this.empty) {    //第一次進來會是空, 所以會到while迴圈外執行生產, 然後生產後馬上通知Factory factory的consume方法可以消費了
+            try {
+                wait(); //庫存不為空時，才會進來此迴圈，且因為庫存不為空，所以要生產前，需要等待庫存用完
+            } catch (InterruptedException e) {
+                System.out.println(e);
+            }
+        }
+
+        product = newProduct;
+        System.out.println("生產: " + newProduct);
+        empty = false;      //生產後將庫存是否為空 設: 否
+        notify();           //生產後通知, 可以消費
+
+        try {
+            Thread.sleep(500);  //只是為了讓生產程式慢慢執行
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    public synchronized void consume() {
+        while (empty) { //第一次進來的時候 是空, 所以會在while回圈內等 到 produce 執行notify後才會往下執行, 且因為produce執行後會將empty改成false所以會跳出while迴圈
+            try {
+                wait(); //庫存是空的時候, 消費需要等待
+            } catch (InterruptedException e) {
+                System.out.println(e);
+            }
+        }
+
+        empty = true;   //消費後 將庫存是否為空 設: 是
+        System.out.println("消費: " + product);
+        notify();   //消費後, 通知可以生產
+
+        try {
+            Thread.sleep(500);  //只是為了讓消費程式慢慢執行
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+}
+
+class Consumer extends Thread {
+    private Factory factory;
+    Consumer(Factory factory) {
+        this.factory = factory;
+    }
+    public void run() {
+        int data;
+        for(int i = 1; i <= 5; i++) {   //消費5次
+        //while (true) {
+            factory.consume();
+        }
+    }
+}
+
+class Producer extends Thread {
+    private Factory factory;
+    Producer(Factory factory) {
+        this.factory = factory;
+    }
+    public void run() {
+        Random random = new Random();
+        for(int i = 1; i <= 5; i++) {   //生產5次
+            // while (true) {
+            int n = random.nextInt(1000); //隨機產生0~999的整數
+            factory.produce(n);
+        }
+    }
+}
+// 21-16 執行緒內部通信 生產消費問題
