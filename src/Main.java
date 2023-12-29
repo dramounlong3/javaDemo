@@ -1,15 +1,14 @@
-import jdk.jshell.spi.ExecutionControlProvider;
 import myMath.CalAdd;
 import myMath.CalMul;
 import myMath.subMath.CalSub;
 //import myMath.* ===> 不包含 myMath.subMath.* 若用*載入, 則子套件需要額外載入
 
-import java.io.IOException;
+import java.io.*;
+import java.sql.SQLOutput;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Date;
-import java.util.InputMismatchException;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -1094,6 +1093,163 @@ public class Main {
         //以上兩種方法會互相等待與通知, 因為鎖定的是同一項物件(Factory factory)
 
         // ch21 執行緒(thread)
+
+        // ch22 輸入與輸出
+        //FileOutputStream, FileInputStream ==> 主要以輸出, 輸入 byte資料為主 (文字、圖檔、音檔、影片...)
+        //FileWriter,       FileReader      ==> 以輸出, 輸入 char 字元資料為主 (文字)
+
+        // 22-1 簡單的串流輸出
+        try {
+            //完整指定路徑時，檔案路徑必須存在，否則會報錯
+            FileOutputStream fileOutputStream1 = new FileOutputStream("D:\\task\\other\\personal\\java\\javaDemo\\src\\file\\ch22_1.txt");
+            fileOutputStream1.write(70); //輸出byte資料, 數字70 由 10進制 轉 2進制後 => 對應ASCII碼 = F
+            fileOutputStream1.close();
+            System.out.println("10進位70 轉ASCII輸出成功!");
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+
+        // 22-2 簡單的串流中文輸出
+        try {
+            //未指定路徑時，則預設於此java執行路徑底下，此例為: javaDemo\
+            FileOutputStream fileOutputStream2 = new FileOutputStream("ch22_2.txt");
+            String str52 = "明志科技大學MINGCHI University歡迎你們";
+            byte[] byteArray = str52.getBytes(); //將字元陣列轉byte陣列
+            fileOutputStream2.write(byteArray);
+            fileOutputStream2.close();;
+            System.out.println("byteArray輸出成功!");
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+
+        // 22-3 簡單的串流輸入
+        try {
+            FileInputStream fileInputStream1 = new FileInputStream("D:\\task\\other\\personal\\java\\javaDemo\\src\\file\\ch22_1.txt");
+            int b1 = fileInputStream1.read(); //從ch22_1.txt 讀取1個byte資料  ===> 故F => 轉為 byte後 被讀取, 並存於int變數內
+            System.out.println("b1= " + (char)b1); //將F的byte資料, 再轉回ASCII字元 ==> 故會印出F
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+
+        // 22-4 以byte資料不適合讀取非英文資料, 因為1個中文字 = 2個byte, 故以一個byte讀取時無法正確辨別此中文字, 若有中文字應以fileReader char的方式讀取較佳
+        // 此為無法識別的範例
+        try {
+            FileInputStream fileInputStream2 = new FileInputStream("ch22_2.txt");
+            int b4; //一次只讀取一個byte
+            while ((b4 = fileInputStream2.read()) != -1) { //只要讀取的結果不為-1, 則表示還有資料
+                System.out.print((char) b4); //轉字元
+            }
+            fileInputStream2.close();
+            System.out.println("\nb4讀取成功!");
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+
+        // 22-5 圖檔複製
+        try {
+            //圖檔來源1.jpg 必須先放到對應位置
+            FileInputStream fileInputStream3 = new FileInputStream("圖檔來源1.jpg");
+            FileOutputStream fileOutputStream3 = new FileOutputStream("圖檔目的1.jpg");
+
+            System.out.println("檔案大小: " + fileInputStream3.available()); //檔案大小: 64806 表示有64806個byte
+            byte[] b5 = new byte[fileInputStream3.available()]; //建立圖檔長度 的byte陣列
+            System.out.println("b5長度: " + b5.length); // 每一個陣列元素 各可以儲存個byte = 8個bits
+
+            fileInputStream3.read(b5);      //從輸入串流讀取圖檔資料存到b5陣列
+            fileOutputStream3.write(b5);    //從b5陣列複製圖檔到: 圖檔目的1.jpg
+            fileInputStream3.close();
+            fileOutputStream3.close();
+            System.out.println("b5圖檔拷貝完成");
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+
+        // 22-6, 22-7 buffer串流
+        // FileInputStream、FileOutputStream 直接連接到硬碟或螢幕
+        // BufferedInputStream、BufferedOutputStream 從緩衝區讀取或輸出資料(從記憶體讀取或輸出)，速度較快
+        try {
+            FileOutputStream outputStream4 = new FileOutputStream("ch22_6.txt");            //輸出檔名
+            BufferedOutputStream bufferedOutputStream1 = new BufferedOutputStream(outputStream4);  //輸出緩衝區
+            String str53 = "Welcome to MINGCHI University of Technology";
+            byte[] b6 = str53.getBytes();       //將(字串)字元陣列轉Byte陣列
+            bufferedOutputStream1.write(b6);    //將Byte陣列輸出到緩衝區
+            bufferedOutputStream1.flush();      //執行flush才會正式輸出到硬碟
+            bufferedOutputStream1.close();
+            outputStream4.close();
+            System.out.println("b6輸出到ch22_6.txt成功");
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+
+        try {
+            FileInputStream fileInputStream4 = new FileInputStream("ch22_6.txt");   //從22-6的範例取得產出的txt文件
+            BufferedInputStream bufferedInputStream1 = new BufferedInputStream(fileInputStream4); //資料存入緩衝區
+            int b7;
+            while((b7 = bufferedInputStream1.read()) != -1) {   //從緩衝區讀取byte資料
+                System.out.print((char) b7);
+            }
+            bufferedInputStream1.close();
+            fileInputStream4.close();
+            System.out.println("\nb7 BufferedInputStream測試成功!");
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+
+        // 22-8 FileWriter
+        try {
+            FileWriter fileWriter1 = new FileWriter("ch22_8.txt");
+            String str55 = "明志科技大學MINGCHI University歡迎你們";
+            fileWriter1.write(str55); //FileWriter 和 FileOutputStream不同, 不用將字元陣列 先轉成 byte陣列, 即可直接輸出
+            fileWriter1.close();
+            System.out.println("str55輸出成功!");
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+
+        // 22-8-1 FileWriter, append
+        try {
+            //寫到22-8的檔案末端
+            FileWriter fileWriter2 = new FileWriter("ch22_8.txt", true);
+            fileWriter2.write("\n");    //先換行
+            fileWriter2.write("新北市泰山鄉");
+            fileWriter2.close();
+            System.out.println("ch22_8.txt附加文字成功!");
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+
+        // 22-9 FileReader, 適合讀取含有非英文字的內容
+        try {
+            FileReader fileReader1 = new FileReader("ch22_8.txt");      //讀取上一份附加文字後的檔案內容
+            int ch9;    //因為讀回來的字元是整數, 故需以int儲存
+            while ((ch9 = fileReader1.read()) != -1) { //以字元形式一次讀取2個byte
+                System.out.print((char)ch9);  //輸出時, 需將int型態儲存的字元內容 轉成 char
+            }
+            fileReader1.close();
+            System.out.println("\nch9輸出成功!");
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        // 22-10 FileReader, FileWriter 執行文字檔案複製
+        try {
+            FileReader fileReader2 = new FileReader("ch22_8.txt");  //讀取檔名
+            FileWriter fileWriter2 = new FileWriter("ch22_10.txt"); //輸出檔名
+            int b10;
+            while ((b10 = fileReader2.read()) != -1) {
+                fileWriter2.write((char) b10); //讀取後馬上轉成字元寫到新檔案
+            }
+            fileWriter2.close();
+            fileReader2.close();
+            System.out.println("b10 文字檔複製完成");
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+
+
+        // ch22 輸入與輸出
+
+
     }
 
     // 8-8 function
