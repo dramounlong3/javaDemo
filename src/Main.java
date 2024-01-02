@@ -1246,8 +1246,138 @@ public class Main {
             System.out.println(e);
         }
 
+        // 22-11 BufferedWriter //與BufferedOutputStream概念相同, 差別只在於處理字元資料
+        try {
+            FileWriter fileWriter3 = new FileWriter("ch22_11.txt"); //設定要產出的檔名
+            BufferedWriter bufferedWriter1 = new BufferedWriter(fileWriter3); //以FilerWriter為參數
+            String str54 = "明志科技大學MingChi歡迎你們";
+            bufferedWriter1.write(str54, 0, 6 );                //明志科技大學
+            bufferedWriter1.newLine();                                  //換行
+            bufferedWriter1.write(str54, 6, str54.length()-6);  //MingChi歡迎你們, 跳過前面六個字, 並輸出總長度-6的文字(輸出最後一個字)
+            bufferedWriter1.close();
+            fileWriter3.close();
+            System.out.println("str54, 輸出成功!");
+        } catch(IOException e) {
+            System.out.println(e);
+        }
+
+        // 22-12  BufferedReader //與BufferedInputStream概念相同, 差別只在於處理字元資料
+        try {
+            FileReader fileReader3 = new FileReader("ch22_11.txt");   //讀取的檔名
+            BufferedReader bufferedReader1 = new BufferedReader(fileReader3);   //以FileReader為參數
+            int i;
+            while((i = bufferedReader1.read()) != -1) {
+                System.out.print((char) i);
+            }
+            bufferedReader1.close();
+            fileReader3.close();
+            System.out.println("\nbufferReader1輸入成功");
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+
+        // 22-16 PrintStream, 平常在使用print, println 皆屬此類別的方法
+        // 也可透過此類別將文字輸出到檔案
+        try {
+            FileOutputStream fileOutputStream5 = new FileOutputStream("ch22_16.txt"); //輸出檔名
+            PrintStream printStream = new PrintStream(fileOutputStream5);                    //以FileOutputStream為參數
+            printStream.println("王者歸來");
+            printStream.println("Java入門邁向高手之路");
+            printStream.print("作者: ");
+            printStream.print("洪錦魁\n");
+            printStream.println("作者今年 " + 35 + " 歲");
+            printStream.close();
+            fileOutputStream5.close();
+            System.out.println("printStream 輸出成功");
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+
+        // 22-19 檔案與資料夾的管理 File類別
+        // file 檔案處理
+        try {
+            File file1 = new File("ch22_19.txt"); //也可以寫成絕對路徑 D:\\xxx\\xxx\\ch22_19.txt ==> 後續getParent()就可以取得父路徑 D:\xxx\xxx
+            System.out.println("ch22_19.txt 檔案是否存在: " + file1.exists());
+            System.out.println("ch22_19.txt 檔案刪除: " + file1.delete());  //檔案存在的話就會刪除, 有刪除傳回true, 沒有刪除時傳回false
+            if(file1.createNewFile()) { //如果file1檔案不存在則建立
+                System.out.println("ch22_19.txt 檔案建立成功!");
+                System.out.println("ch22_19.txt 檔案是否存在: " + file1.exists());          // true
+                System.out.println("ch22_19.txt 檔名: " + file1.getName());                 // ch22_19.txt
+                System.out.println("ch22_19.txt 父路徑: " + file1.getParent());             // null  => 因為給定的參數只有檔名, 所以無法取得父路徑
+                System.out.println("ch22_19.txt 絕對路徑: " + file1.getAbsolutePath());     // D:\task\other\personal\java\javaDemo\ch22_19.txt  => 取得絕對路徑
+                System.out.println("ch22_19.txt 是否為檔案: " + file1.isFile());            // true
+                System.out.println("ch22_19.txt 是否為目錄: " + file1.isDirectory());       // false
+                System.out.println("ch22_19.txt 是否為絕對路徑: " + file1.isAbsolute());    // false , 此例只給檔名, 所以是相對路徑
+                System.out.println("ch22_19.txt 預設是否可讀: " + file1.canRead());         // true
+                System.out.println("ch22_19.txt 預設是否可寫: " + file1.canWrite());        // true
+                System.out.println("ch22_19.txt 設定為唯讀: " + file1.setReadOnly());       // true => 表示是否設定成功
+                System.out.println("ch22_19.txt 是否可寫: " + file1.canWrite());            // false
+                System.out.println("ch22_19.txt 設定為可讀寫: " + file1.setWritable(true)); // true => 表示是否設定成功
+                System.out.println("ch22_19.txt 是否可寫: " + file1.canWrite());            // true
+            } else {
+                System.out.println("ch22_19.txt 檔案已存在, 建立失敗");
+            }
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+
+        // 22-21 directory 資料夾處理
+        try {
+            File file2 = new File("ch22_21.txt");
+            System.out.println("ch22_19.txt 檔案刪除: " + file2.delete());  //檔案存在的話就會刪除, 有刪除傳回true, 沒有刪除時傳回false
+
+            //建立檔案
+            if(file2.createNewFile()) {
+                System.out.println(file2.getName() + " 檔案建立成功");
+            } else {
+                System.out.println(file2.getName() + " 檔案已存在, 建立失敗");
+            }
+
+            //建立資料夾
+            File directory1 = new File("dir22_21"); //資料夾名稱
+            System.out.println("dir22_1資料夾刪除: " + directory1.delete());           //資料夾存在的話就會刪除, 有刪除傳回true, 沒有刪除時傳回false
+            if(directory1.mkdir()) {
+                System.out.println(directory1.getName() + " 資料夾建立成功");
+            } else {
+                System.out.println(directory1.getName() + " 資料夾已存在, 建立失敗");
+            }
+
+            //更改檔案名稱
+            File file3 = new File("new_ch22_21.txt");
+            System.out.println("new_ch22_21.txt 檔案刪除: " + file3.delete()); //如果既有檔案沒刪除 沒辦法順利更名
+            System.out.println("ch22_21.txt => new_ch22_21.txt 更改檔名是否成功: " + file2.renameTo(file3));  //更改檔名: ch22_21.txt => new_ch22_21.txt
+            System.out.println("實體檔 ch2_21.txt 修改後的檔名" + file3.getName());                           //new_ch2_21.txt, file2.getName()仍是ch22_21.txt; 只是將建立後實體的檔名修改而已
+
+            //更改資料夾名稱
+            File directory2 = new File("new_dir22_21"); //新資料夾名稱
+            System.out.println("new_dir22_21 資料夾刪除: " + directory2.delete()); //如果既有資料夾沒刪除 沒辦法順利更名
+            System.out.println("dir22_21 => new_dir22_21 資料夾更名是否成功: " + directory1.renameTo(directory2));
+            System.out.println("實體資料夾 dir22_21 修改後的名稱: " + directory2.getName());
+
+            // 22-23 列印指定資料夾底下 當層的所有 "檔案" 和 "目錄" 名稱 (不會遞迴往下找)
+            File FDNameList = new File(".\\src\\myMath"); //由當前目錄往下時, 必須先打.
+            String[] paths;
+            paths = FDNameList.list();  //將所有檔案 和 目錄名稱儲存至 array of string
+            System.out.println("長度: " + FDNameList.list().length);
+            for(int i = 0; i < paths.length; i++) {
+                System.out.println((i+1) + ".: " + paths[i]);   //1.: CalAdd.java 2.: CalMul.java 3.: subMath
+            }
+
+            // 22-24
+            File FDNameListWithPath = new File(".\\src\\myMath");
+            File[] fullPaths;   //只能用File型態儲存
+            fullPaths = FDNameList.listFiles();  //將所有檔案 和 目錄 名稱+路徑 儲存至 array of file (只會根據前面創建的參數顯示路徑, 所以如果用相對路徑就只會顯示相對路徑的位置)
+            System.out.println("長度: " + FDNameListWithPath.list().length);
+            for(int i = 0; i < FDNameListWithPath.list().length; i++) {
+                System.out.println((i+1) + ".: " + fullPaths[i]);   //1.: CalAdd.java 2.: CalMul.java 3.: subMath
+            }
+
+        } catch (IOException e) {
+            System.out.println(e);
+        }
 
         // ch22 輸入與輸出
+
 
 
     }
