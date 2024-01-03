@@ -13,6 +13,8 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
@@ -1101,7 +1103,7 @@ public class Main {
         // 22-1 簡單的串流輸出
         try {
             //完整指定路徑時，檔案路徑必須存在，否則會報錯
-            FileOutputStream fileOutputStream1 = new FileOutputStream("D:\\task\\other\\personal\\java\\javaDemo\\src\\file\\ch22_1.txt");
+            FileOutputStream fileOutputStream1 = new FileOutputStream(".\\src\\file\\ch22_1.txt");
             fileOutputStream1.write(70); //輸出byte資料, 數字70 由 10進制 轉 2進制後 => 對應ASCII碼 = F
             fileOutputStream1.close();
             System.out.println("10進位70 轉ASCII輸出成功!");
@@ -1124,7 +1126,7 @@ public class Main {
 
         // 22-3 簡單的串流輸入
         try {
-            FileInputStream fileInputStream1 = new FileInputStream("D:\\task\\other\\personal\\java\\javaDemo\\src\\file\\ch22_1.txt");
+            FileInputStream fileInputStream1 = new FileInputStream(".\\src\\file\\ch22_1.txt");
             int b1 = fileInputStream1.read(); //從ch22_1.txt 讀取1個byte資料  ===> 故F => 轉為 byte後 被讀取, 並存於int變數內
             System.out.println("b1= " + (char)b1); //將F的byte資料, 再轉回ASCII字元 ==> 故會印出F
         } catch (IOException e) {
@@ -1375,9 +1377,40 @@ public class Main {
         } catch (IOException e) {
             System.out.println(e);
         }
-
         // ch22 輸入與輸出
 
+        // ch23 壓縮與解壓縮
+        // 23-1 壓縮單一文件
+        try {
+            //先建立實體的ch23_1.txt檔案
+            FileOutputStream fileOutputStream = new FileOutputStream("ch23_1.txt");
+            //如果內容不夠多壓縮後有可能檔案變大, 故放了一堆文字在裡面測試
+            String str60 = "science and technology university. I went to KTV with my best friends yesterday, and you never know what a happy time that we have in there. Build completed successfully in 1 sec, 508 ms (a minute ago)\n usually we are number one. one two three four, logistics come on go fight win and go fight win. It's final time to go home. why this file is not compress successfully? Can you tell me what happened? If you tell me the answer, I will appreciate it. The reasons is that there are not enough data to describe the text file. thank you.";
+            byte[] bt = str60.getBytes();
+            fileOutputStream.write(bt);
+            fileOutputStream.close();
+
+            // 建立欲壓縮的檔案 (ch23_1.txt必須已存在)
+            File fileToZip = new File("ch23_1.txt");
+            FileInputStream src = new FileInputStream(fileToZip);
+            //建立壓縮目的位置物件
+            FileOutputStream zipToSave = new FileOutputStream("ch23_1_zip.zip");
+            ZipOutputStream dst = new ZipOutputStream(zipToSave);
+            //在壓縮檔內建立壓縮項目
+            ZipEntry zipEntry = new ZipEntry(fileToZip.getName()); //儲存壓縮前的檔名
+            dst.putNextEntry(zipEntry); //將壓縮檔名(壓縮項目), 存入壓縮物件內
+
+            byte[] bytes = new byte[1024];
+            int length;
+            while ((length = src.read(bytes)) >= 0) {
+                dst.write(bytes, 0, length);
+            }
+            dst.close();
+            src.close();
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+        // ch23 壓縮與解壓縮
 
 
     }
