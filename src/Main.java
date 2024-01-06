@@ -1410,6 +1410,46 @@ public class Main {
         } catch (IOException e) {
             System.out.println(e);
         }
+
+        // 23-2 壓縮多個檔案
+        try {
+            //產出要壓縮的實體檔案
+            FileOutputStream fileOutputStream1 = new FileOutputStream("ch23_2_1.txt");
+            FileOutputStream fileOutputStream2 = new FileOutputStream("ch23_2_2.txt");
+            FileOutputStream[] fileOutputStreams = {fileOutputStream1, fileOutputStream2};
+            String st1 = "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Cum, quidem vero! Consectetur blanditiis nihil maxime laboriosam delectus ea nobis, aperiam recusandae voluptates fugiat nostrum quidem rem eius? Eaque, explicabo. Aliquam, ipsam quas. Quos, odio nobis quia perferendis ea accusantium enim repellat iusto libero doloremque optio aspernatur nam corrupti impedit minus sequi illum deserunt magnam ducimus a tempora quaerat? Fugit, deleniti.";
+            String st2 = "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Porro perferendis culpa, fugit magni id natus autem architecto repellendus at harum quod ullam deserunt numquam, rerum nulla, veritatis itaque omnis dolorem mollitia quasi asperiores! Autem voluptates tempora dicta sed voluptatum aliquid cumque minima exercitationem atque rerum sapiente blanditiis et expedita similique iusto vel provident dolorem, sunt, delectus reiciendis dolore, veritatis necessitatibus!";
+            String[] strArray = new String[]{st1, st2};
+            for (int i = 0; i < fileOutputStreams.length; i++) {
+                byte[] byteTemp = strArray[i].getBytes();
+                fileOutputStreams[i].write(byteTemp);
+                fileOutputStreams[i].close();
+            }
+
+            //建立壓縮目的位置物件
+            String[] srcFiles = {"ch23_2_1.txt","ch23_2_2.txt"};
+            FileOutputStream zipToSave = new FileOutputStream("ch23_2.zip");
+            ZipOutputStream dst = new ZipOutputStream(zipToSave);
+
+            for (String srcFile:srcFiles) {
+                //建立欲壓縮物件的src
+                File fileToZip = new File(srcFile);
+                FileInputStream src = new FileInputStream(fileToZip);
+                //在壓縮檔內建立壓縮項目
+                ZipEntry zipEntry = new ZipEntry(fileToZip.getName());
+                dst.putNextEntry(zipEntry);
+                //以byte方式讀出為壓縮檔案的src物件, 並以zip格式寫入dst輸出串流
+                byte[] bytes = new byte[1024];
+                int length;
+                while ((length = src.read(bytes)) >= 0) {
+                    dst.write(bytes,0,length);
+                }
+                src.close();
+            }
+            dst.close();
+        } catch (IOException e) {
+            System.out.println(e);
+        }
         // ch23 壓縮與解壓縮
 
 
