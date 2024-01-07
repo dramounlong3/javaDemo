@@ -14,6 +14,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class Main {
@@ -1450,6 +1451,52 @@ public class Main {
         } catch (IOException e) {
             System.out.println(e);
         }
+
+        // 23-3 壓縮整個資料夾
+        // 建立欲壓縮的資料夾File物件 (此檔案必須已存在);
+        try {
+            File fileToZip = new File("./src/myMath");
+            //建立壓縮的位置物件
+            FileOutputStream zipToSave = new FileOutputStream("ch23_myMath.zip");
+            ZipOutputStream dst = new ZipOutputStream(zipToSave);
+            //呼叫方法處理整個資料夾的壓縮
+            zipFile(fileToZip, fileToZip.getName(), dst);
+            dst.close();
+            zipToSave.close();
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+
+        // 23-4解壓縮資料夾
+        try {
+            File unZipDir = new File("ch23_myMath_unZip");
+            unZipDir.deleteOnExit(); //重複執行時先刪除 --> 因為此資料夾內有檔案, 所以無法直接刪除, 需另外寫function用遞迴的方式刪除, 但下面的程式產相同名稱的檔案到資料夾內時, 檔案還是可以順利以同名的方式覆蓋上去
+            if(unZipDir.mkdir()) {
+                System.out.println(unZipDir.getName() + " 儲存解壓縮檔案的資料夾建立成功");
+            } else {
+                System.out.println(unZipDir.getName() + " 儲存解壓縮檔案的資料夾已存在, 建立失敗");
+            }
+
+            byte[] buffer = new byte[1024];
+            FileInputStream srcFile = new FileInputStream("ch23_myMath.zip");   //拿23-3的壓縮檔案資料來解壓縮
+            ZipInputStream src = new ZipInputStream(srcFile); //建立讀取zip檔案之物件 的zipInputStream物件
+            ZipEntry zipEntry = src.getNextEntry();           //讀取壓縮檔案內的所有項目
+            while (zipEntry != null) {                        //不是null則解壓縮
+                String fName = zipEntry.getName();            //取得欲解壓縮的檔案名稱
+                File nName = new File(unZipDir + "/" + fName);  //因為解壓縮後的檔案要放到 前面建立的解壓縮資料夾內, 所以需要加上parent path name
+                int len;
+                FileOutputStream dst = new FileOutputStream(nName); //建立要輸出的檔案名稱
+                while ((len = src.read(buffer)) >= 0) {
+                    dst.write(buffer,0,len);
+                }
+                dst.close();
+                zipEntry = src.getNextEntry();  //取得下一個原先已壓縮的檔案項目
+            }
+            src.close();
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+
         // ch23 壓縮與解壓縮
 
 
@@ -1497,6 +1544,35 @@ public class Main {
         }
     }
     // 20-8 function
+
+    // 22-3 壓縮整個資料夾內的檔案 function
+    private  static  void zipFile(File fileToZip, String fileName, ZipOutputStream dst) throws IOException {
+        //隱藏檔不壓縮
+        if(fileToZip.isHidden()) {
+            return;
+        }
+        //如果是資料夾則處理
+        if(fileToZip.isDirectory()) {
+            File[] files = fileToZip.listFiles();   //獲得資料夾所有檔案名;
+            for (File file:files) {
+                zipFile(file, fileName + "/" + file.getName(), dst);    //遞迴處理資料夾內的檔案, 所以前面要帶parent資料夾名稱
+            }
+            return;
+        }
+        //如果不是隱藏檔也不是資料夾, 則直接壓縮此檔案, 資料夾內的資料夾  在其更下層的檔案不會保留第二層的資料夾, 只會將其全部拉出來在同一層做壓縮
+        FileInputStream src = new FileInputStream(fileToZip);
+        //在壓縮檔內建立壓縮項目
+        ZipEntry zipEntry = new ZipEntry(fileToZip.getName());
+        dst.putNextEntry(zipEntry);
+        //以byte方式讀出未壓縮檔案src物件, 然後以zip格式寫入輸出串流dst物件
+        byte[] bytes = new byte[1024];
+        int length;
+        while ((length = src.read(bytes)) >= 0) {
+            dst.write(bytes,0,length);    //在zip物件 以zip格式寫入輸出串流
+        }
+        src.close();
+    }
+    // 22-3 壓縮整個資料夾內的檔案 function
 }
 
 /*ch8*/
