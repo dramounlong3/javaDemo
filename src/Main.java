@@ -1496,9 +1496,20 @@ public class Main {
         } catch (IOException e) {
             System.out.println(e);
         }
-
         // ch23 壓縮與解壓縮
 
+        // ch24 collection集合
+        // 24-1 簡易的成員變數以泛型宣告, 泛型(Generic) 不事先定義好特定的型別, 等到執行時才決定要用什麼型態
+        MyGenericSample<Integer> myGenericSample1 = new MyGenericSample<Integer>();  //以泛型的方式將此類別內的T型態, 定義為Integer
+        myGenericSample1.setGenMemberVar(100);
+        System.out.println(myGenericSample1.getGenMemberVar());
+        MyGenericSample<Double> myGenericSample2 = new MyGenericSample<Double>();  //以泛型的方式將此類別內的T型態, 定義為Double
+        myGenericSample2.setGenMemberVar(67.204988594);
+        System.out.println(myGenericSample2.getGenMemberVar());
+        MyGenericSample<String> myGenericSample3 = new MyGenericSample<String>();  //以泛型的方式將此類別內的T型態, 定義為String
+        myGenericSample3.setGenMemberVar("generic's string");
+        System.out.println(myGenericSample3.getGenMemberVar());
+        // ch24 collection集合
 
     }
 
@@ -2039,3 +2050,17 @@ class Producer extends Thread {
     }
 }
 // 21-16 執行緒內部通信 生產消費問題
+
+// 24-1 Generic
+class MyGenericSample<T> {
+    private T genMemberVar; //當宣告這個class的物件時, 會同步給定T的型態, 此時才會決定T為什麼型別
+
+    public void setGenMemberVar(T genMemberVar) {
+        this.genMemberVar = genMemberVar;
+    }
+
+    public T getGenMemberVar() {
+        return genMemberVar;
+    }
+}
+// 24-1 Generic
