@@ -8,9 +8,7 @@ import java.sql.SQLOutput;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -1499,7 +1497,8 @@ public class Main {
         // ch23 壓縮與解壓縮
 
         // ch24 collection集合
-        // 24-1 簡易的成員變數以泛型宣告, 泛型(Generic) 不事先定義好特定的型別, 等到執行時才決定要用什麼型態
+        // 泛型(Generic) 不事先定義好特定的型別, 等到執行時才決定要用什麼型態
+        // 24-01 泛型成員變數
         MyGenericSample<Integer> myGenericSample1 = new MyGenericSample<Integer>();  //以泛型的方式將此類別內的T型態, 定義為Integer
         myGenericSample1.setGenMemberVar(100);
         System.out.println(myGenericSample1.getGenMemberVar());
@@ -1509,6 +1508,59 @@ public class Main {
         MyGenericSample<String> myGenericSample3 = new MyGenericSample<String>();  //以泛型的方式將此類別內的T型態, 定義為String
         myGenericSample3.setGenMemberVar("generic's string");
         System.out.println(myGenericSample3.getGenMemberVar());
+
+        // 24-02 泛型方法
+        Integer[] intArray = {5,10,30,50,20};
+        Character[] charArray = {'J','A','V','A'};
+        System.out.println("透過泛型方法印出整數陣列元素");
+        genericOutputArray(intArray);
+        System.out.println("透過泛型方法印出字元陣列元素");
+        genericOutputArray(charArray);
+
+        // 24-03 泛型萬用字元 ?
+        ArrayList<Square> arrayList1 = new ArrayList<Square>();
+        arrayList1.add(new Square());   //建立Square的實體, 並新增到array list
+        demoShape(arrayList1);
+        ArrayList<Circle> arrayList2 = new ArrayList<Circle>();
+        arrayList2.add(new Circle());   //建立Circle的實體, 並新增到array list
+        demoShape(arrayList2);
+
+        //24-1 ArrayList sample (元素可重複)
+        ArrayList<String> list1 = new ArrayList<String>();
+        list1.add("北京");
+        list1.add("香港");
+        list1.add("台北");
+        //使用foreach遍歷list
+        for (String s:list1) {
+            System.out.println("list by foreach= " + s);
+        }
+        //使用iterator遍歷list
+        Iterator<String> itr =  list1.iterator(); //傳回迭代器 ==> 使用iterator方法傳回所有元素, 並儲存於Iterator物件
+        while (itr.hasNext()) {
+            System.out.println("list by iterator= " + itr.next()); //傳回迭代器內的元素
+        }
+        //使用var宣告arraylist list2, 並一次新增list1後面, 好處在於宣告var的時候不需要先定義型態, 在指定=時才決定
+        var list2 = new ArrayList<String>();
+        list2.add("南京");
+        list2.add("澳門");
+        list2.add("台北");      //儲存與list1相同的元素
+        list1.addAll(list2);    //一次將list2新增到list1的後面
+        System.out.println("list1= " + list1);
+        //在索引位置插入元素, 取得指定索引元素
+        System.out.println("list1元素數量: " + list1.size());
+        list1.add(1,"廈門");  //arraylist index和array一樣都是從0開始算, 所以廈門會在第二個元素上
+        System.out.println("插入1 廈門後, list1元素數量: " + list1.size());
+        System.out.println("插入1 廈門後, list1= " + list1);
+        //removeAll 從list1移除含有list2內的所有元素, 沒有的元素會忽略
+        list2.add("合肥");            //新增一個list1沒有的元素
+        System.out.println("移除前list1= " + list1);
+        System.out.println("移除前list2= " + list2);
+        list1.removeAll(list2);       //移除
+        System.out.println("移除後list1= " + list1);
+        System.out.println("移除後list2= " + list2);
+
+
+
         // ch24 collection集合
 
     }
@@ -1584,6 +1636,23 @@ public class Main {
         src.close();
     }
     // 22-3 壓縮整個資料夾內的檔案 function
+
+    // 24-2 泛型方法 function (E可用任何英文字母代替, 較常使用T)
+    public static <E> void genericOutputArray(E[] elements) {
+            for (E element:elements) {
+                System.out.println(element);
+            }
+    }
+    // 24-2 泛型方法 function
+
+    // 24-3 泛型的萬用字元 ? function
+    public static void demoShape(ArrayList<? extends Shape> lists) { //參數可以接受ArrayList 且 型態為 class 必須繼承 Shape才可以)
+        for (Shape list:lists) {
+            list.outputPrint();
+        }
+    }
+
+    // 24-3 泛型的萬用字元 ? function
 }
 
 /*ch8*/
@@ -2064,3 +2133,24 @@ class MyGenericSample<T> {
     }
 }
 // 24-1 Generic
+
+// 24-3 泛型的萬用字元
+abstract class Shape {
+    abstract void outputPrint();
+}
+
+class Square extends Shape{
+    @Override
+    void outputPrint() {
+        System.out.println("我是正方形");
+    }
+}
+
+class Circle extends Shape {
+    @Override
+    void outputPrint() {
+        System.out.println("我是圓形");
+    }
+}
+
+// 24-3 泛型的萬用字元
