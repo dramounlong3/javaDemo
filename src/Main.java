@@ -1525,7 +1525,7 @@ public class Main {
         arrayList2.add(new Circle());   //建立Circle的實體, 並新增到array list
         demoShape(arrayList2);
 
-        //24-1 ArrayList sample (元素可重複)
+        //24-1 ArrayList sample (元素可重複, 記憶體位置是連續的, 只能放物件類別, 宣告時不需要指定大小而且可以動態調整大小(Array不行)), 元素新增或刪除時可能會導致其他元素位移(速度較慢)
         ArrayList<String> list1 = new ArrayList<String>();
         list1.add("北京");
         list1.add("香港");
@@ -1558,9 +1558,66 @@ public class Main {
         list1.removeAll(list2);       //移除
         System.out.println("移除後list1= " + list1);
         System.out.println("移除後list2= " + list2);
+        //retainAll 從list3中保留list4才有的元素
+        ArrayList<String> list3 = new ArrayList<String>();
+        list3.add("北京");
+        list3.add("香港");
+        list3.add("台北");
+        ArrayList<String> list4 = new ArrayList<String>();
+        list4.add("北京");
+        list4.add("上海");
+        list4.add("台北");
+        list3.retainAll(list4);
+        System.out.println("list3: " + list3);  //保留北京、台北
+        //set、indexOf、lastIndexOf
+        ArrayList<Integer> list5 = new ArrayList<Integer>();    //array list的型態只能放物件型別的 Integer表示, 不可使用int
+        for (int i = 10; i <= 50 ; i += 10) {
+            list5.add(i);
+        }
+        System.out.println("更改前 list5: " + list5);
+        list5.set(1, 100);  //將index=1 的元素改為100, 所以20變100
+        list5.add(100);     //末端加100
+        System.out.println("更改後 list5: " + list5);
+        System.out.println("第一次出現100的index: " + list5.indexOf(100));             // 1
+        System.out.println("最後一次出現100的index: " + list5.lastIndexOf(100));    // 5
 
+        //24-12 LinkedList 採用pointer指向下一個位置, 記憶體位置不連續, 元素可重複, 新增或刪除時 元素無須位移(只需修改pointer指向的位置, 所以速度較快), 適合應用在stack和queue上
+        LinkedList<Integer> list6 = new LinkedList<Integer>();
+        for (int i = 10; i <= 50 ; i+=10) {
+            list6.add(i);
+        }
+        System.out.println("list6= " + list6);
+        System.out.println("list6在前面+一筆0");
+        list6.addFirst(0);
+        System.out.println("list6在後面+一筆60");
+        list6.addLast(60);
+        System.out.println("list6第一筆= " + list6.getFirst());
+        System.out.println("list6最後一筆= " + list6.getLast());
+        System.out.println("list6= " + list6);
+        System.out.println("list6刪除第一筆= " + list6.removeFirst());
+        System.out.println("list6刪除最後一筆= " + list6.removeLast());
+        System.out.println("list6 final status = " + list6);
+        //堆疊 stack 先進後出
+        //使用linked list達成, addLast() = push, removeLast() = pop
+        //佇列 queue 先進先出
+        //使用linked list達成, addLast() = enqueue, removeFirst() = dequeue
 
-
+        //24-13 ListIterator interface, 可向前或向後迭代
+        LinkedList<String> list7 = new LinkedList<String>();
+        list7.add("北京");
+        list7.add("香港");
+        list7.add("台北");
+        //建立ListIterator
+        ListIterator<String> listIterator = list7.listIterator();   //也可以用var listIterator = list7.listIterator 當作變數設計
+        System.out.println("listIterator原始順序= " + list7);
+        System.out.println("listIterator由前向後遍歷");
+        while (listIterator.hasNext()) {
+            System.out.println(listIterator.next());        //取出下一個物件(一開始應該是指到null)
+        }
+        System.out.println("listIterator由後向前遍歷");
+        while (listIterator.hasPrevious()) {
+            System.out.println(listIterator.previous());    //取出上一個物件(一開始應該是指到null)
+        }
         // ch24 collection集合
 
     }
