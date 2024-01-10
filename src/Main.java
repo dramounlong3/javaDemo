@@ -1618,6 +1618,115 @@ public class Main {
         while (listIterator.hasPrevious()) {
             System.out.println(listIterator.previous());    //取出上一個物件(一開始應該是指到null)
         }
+        // 24-14 hashSet 元素不能重複, 插入的順序不一定等於排列的順序, 是根據hash值計算後直接儲存到某個位置
+        HashSet<String> set = new HashSet<String>();
+        set.add("北京");
+        set.add("香港");
+        set.add("台北");
+        set.add("北京");  //故意重複, 此元素無法增交到set集合內
+        System.out.println("hashSet: " + set);
+        System.out.println("hashSet數量: " + set.size());           //3
+        System.out.println("hashSet是否為空: " + set.isEmpty());    //false
+        System.out.println("hashSet是否包含元素(香港): " + set.contains("香港")); //true
+        set.remove("香港");
+        System.out.println("hashSet刪除香港後, 是否包含元素(香港): " + set.contains("香港")); //false
+        System.out.println("hashSet: " + set);
+        set.clear();
+        System.out.println("hashSet清空後是否為空: " + set.isEmpty()); //true
+        System.out.println("hashSet: " + set);
+        //遍歷hashSet
+        var set1 = new HashSet<String>();
+        set1.add("北京");
+        set1.add("香港");
+        set1.add("台北");
+        set1.add("東京");
+        set1.add("曼谷");
+        Iterator<String> iterator1 = set1.iterator();
+        while(iterator1.hasNext()) {
+            System.out.println("HashSet: " + iterator1.next());
+        }
+
+        //LinkedHashSet    和HashSet的差別在於 插入的順序等於排列的順序, 但一樣不能重複元素
+        LinkedHashSet<String> linkedHashSet1 = new LinkedHashSet<String>();
+        linkedHashSet1.add("北京");
+        linkedHashSet1.add("香港");
+        linkedHashSet1.add("台北");
+        linkedHashSet1.add("東京");
+        linkedHashSet1.add("曼谷");
+        Iterator<String> iterator2 = linkedHashSet1.iterator();
+        while (iterator2.hasNext()) {
+            System.out.println("LinkedHashSet: " + iterator2.next());
+        }
+
+        //TreeSet 使用樹狀結構儲存資料, 插入資料後會自動按照由小到大的順序排列, 仍然不可有重複的元素
+        TreeSet<Integer> treeSet1 = new TreeSet<Integer>();
+        treeSet1.add(8);
+        treeSet1.add(3);
+        treeSet1.add(11);
+        treeSet1.add(1);
+        treeSet1.add(6);
+        System.out.println("treeSet1 第一個元素(最小): " + treeSet1.first());
+        System.out.println("treeSet1 最後一個元素(最大): " + treeSet1.last());
+        Iterator<Integer> iterator3 = treeSet1.iterator();
+        while(iterator3.hasNext()) {
+            System.out.println("treeSet1: " + iterator3.next());
+        }
+
+        // Map 以key value的形式儲存資料
+        // HashMap key值唯一(相同時會有後蓋前的問題), 插入順序與列表順序不一定相同, 允許ker or value = null
+        HashMap<Integer, String> hashMap1 = new HashMap<Integer, String>();
+        hashMap1.put(101, "明志科大");
+        hashMap1.put(102, "台灣科大");
+        hashMap1.put(103, "台北科大");
+        hashMap1.put(null, null);
+        hashMap1.put(103, "台南科大");  //key相同時, 後面會蓋掉前面的, 故103=台南科大
+        hashMap1.put(104, "台北科大");  //value相同, 可以同時存在
+        System.out.println("hashMap1: " + hashMap1);
+        System.out.println("hashMap1數量: " + hashMap1.size());         //5
+        System.out.println("hashMap1是否為空: " + hashMap1.isEmpty());  //false
+        System.out.println("hashMap取得key=103的value: " + hashMap1.get(103));          //台南科大
+        System.out.println("hashMap1是否包含key 104: " + hashMap1.containsKey(104));    //true
+        hashMap1.remove(104);
+        System.out.println("hashMap1刪除104後, 是否包含key 104: " + hashMap1.containsKey(104));    //false
+        System.out.println("hashMap1: " + hashMap1);
+        //entrySet() ==> 將hashMap1轉成 key, value 的Set物件
+        System.out.println("entrySet: " + hashMap1.entrySet()); // {null=null, 101=明志科大, 102=台灣科大, 103=台南科大} ===> [null=null, 101=明志科大, 102=台灣科大, 103=台南科大]
+        //遍歷hashMap1
+        for (Map.Entry m1:hashMap1.entrySet()) {
+            System.out.printf("遍歷hashMap1==> %d : %s\n", m1.getKey(), m1.getValue());   //透過迭代取得每一個項目的key, value
+        }
+        hashMap1.clear();   //刪除所有元素
+        System.out.println("hashMap1是否為空: " + hashMap1.isEmpty());  //true
+        System.out.println("hashMap1: " + hashMap1);
+
+        // LinkedHashMap 跟HashMap相同, 差別只在於插入的順序等於列表順序
+        var linkedHashSet2 = new LinkedHashMap<String, String>();
+        linkedHashSet2.put("Taipei", "台北");
+        linkedHashSet2.put("Tokyo", "東京");
+        linkedHashSet2.put("Singapore", "新加坡");
+        System.out.println("linkedHashSet2: " + linkedHashSet2);
+        for (Map.Entry m4:linkedHashSet2.entrySet()) {
+            System.out.println("遍歷linkedHashSet2: " + m4.getKey() + m4.getValue());
+            System.out.printf("%12s : %s\n", m4.getKey(), m4.getValue()); //%12s表示不足12個字元的部分前面以空白補齊
+        }
+
+        // 24-21 treeMap 以keyValue的方式儲存, 不允許null key, 但可有null value, 與treeSet一樣插入後的順序會由小排到大
+        TreeMap<Integer, String> treeMap = new TreeMap<Integer, String>();
+        treeMap.put(1003,"東京");
+        treeMap.put(1001,"台北");
+        treeMap.put(1009,"新加坡");
+        treeMap.put(1005,"芝加哥");
+        treeMap.put(1006,"巴黎");
+        System.out.println("treeMap 第一個元素: " + treeMap.firstKey());
+        System.out.println("treeMap 最後一個元素: " + treeMap.lastKey());
+        //遍歷treeMap
+        for (Map.Entry m6:treeMap.entrySet()){
+            System.out.printf("%d : %s\n", m6.getKey(), m6.getValue());
+        }
+        System.out.println("取得子treeMap且key在: 1003(含) - 1006(不含)之間= " + treeMap.subMap(1003, 1006));
+        System.out.println("取得子treeMap且key > 1003(含) = " + treeMap.tailMap(1003));
+
+
         // ch24 collection集合
 
     }
