@@ -1726,6 +1726,35 @@ public class Main {
         System.out.println("取得子treeMap且key在: 1003(含) - 1006(不含)之間= " + treeMap.subMap(1003, 1006));
         System.out.println("取得子treeMap且key > 1003(含) = " + treeMap.tailMap(1003));
 
+        //24-22 shuffle
+        ArrayList<String> arrayList3 = new ArrayList<String>();
+        arrayList3.add("1");
+        arrayList3.add("2");
+        arrayList3.add("3");
+        arrayList3.add("4");
+        arrayList3.add("5");
+        arrayList3.add("6");
+        arrayList3.add("7");
+        arrayList3.add("8");
+        arrayList3.add("9");
+        arrayList3.add("10");
+        arrayList3.add("J");
+        arrayList3.add("Q");
+        arrayList3.add("K");
+        //重新排列並遍歷 10次
+        for (int i = 0; i < 11; i++) {
+            //第一次不打亂
+            if(i > 0) {
+                Collections.shuffle(arrayList3);
+            }
+            System.out.print("第 " + (i + 1) + " 次: ");
+            for (String porker:arrayList3) {
+                System.out.printf("%s\t", porker);
+            }
+            System.out.println();
+        }
+
+
 
         // ch24 collection集合
 
