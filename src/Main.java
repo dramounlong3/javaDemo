@@ -1753,11 +1753,27 @@ public class Main {
             }
             System.out.println();
         }
-
-
-
         // ch24 collection集合
 
+        // ch25 現代Java運算
+        // ch25-1 增強版的匿名內部類別, 與原本的匿名內部類別差別在於用泛型決定型態
+        StringAdd<String> obj = new StringAdd<String>() { //匿名類別的型態可以不用指定, 會自行推斷 ==> new StringAdd<>() { ...
+            @Override
+            String display(String x, String y) {
+                return x + y;
+            }
+        };
+        System.out.println(obj.display("java", "王者歸來"));
+
+        // 25-2 Lambda表達式
+        //用lambda處理 功能介面的實作
+        Shapes<String> obj2 = (x, y) -> { //此段會直接帶入interface裡面的方法, 輸入的參數 可標示也可不標示型態 (String x, String y) -> { ...  但建議標示
+                return x + y;
+        };
+        System.out.println(obj2.draw("圓形 ","三角形"));
+
+
+        // ch25 現代Java運算
     }
 
     // 8-8 function
@@ -2347,5 +2363,19 @@ class Circle extends Shape {
         System.out.println("我是圓形");
     }
 }
-
 // 24-3 泛型的萬用字元
+
+// 25-1 增強版匿名內部類別
+abstract class StringAdd<T> {
+    //回傳型態, 參數型態 都是呼叫時才定義
+    abstract T display(T x, T y);
+}
+// 25-1 增強版匿名內部類別
+
+// 25-2 使用lambda設計匿名類別
+@FunctionalInterface //當interface只有一個抽象方法的時候, 就屬於功能介面, 如果有此註解 則未來有人在這個interface新增 方法則會出錯
+interface Shapes<T> {
+    abstract T draw(T x, T y);
+    // abstract T test2(T g); //加這行會出錯
+}
+// 25-2 使用lambda設計匿名類別
