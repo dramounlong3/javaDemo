@@ -1772,6 +1772,14 @@ public class Main {
         };
         System.out.println(obj2.draw("圓形 ","三角形"));
 
+        // 25-3 forEach
+        HashSet hashSet1 = new HashSet();
+        hashSet1.add("台北");
+        hashSet1.add("香港");
+        hashSet1.add("北京");
+        System.out.println("以Iterable介面的forEach方法 遍歷所有元素");
+        hashSet1.forEach(element -> System.out.println(element)); //省略參數的小括號, 省略主體的大括號, 省略return(因為只有一行敘述)
+
 
         // ch25 現代Java運算
     }
