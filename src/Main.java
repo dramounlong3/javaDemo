@@ -1780,7 +1780,15 @@ public class Main {
         System.out.println("以Iterable介面的forEach方法 遍歷所有元素");
         hashSet1.forEach(element -> System.out.println(element)); //省略參數的小括號, 省略主體的大括號, 省略return(因為只有一行敘述)
 
-
+        // 25-4 方法參照
+        // 使用方法參照 ==> 功能介面的方法, 也可以說是 緊湊簡易版的Lambda表達式
+        // 方法參照可用於
+        // 1.參考靜態方法(static method)
+        // 2.參考實例方法(instance method) ==> 就是一般宣告的方法
+        // 3.參考構造方法(constructor)     ==> 就是建構子
+        // 參考靜態方法 containingClass::staticMethodName
+        Message obj1 = (Test::talking); //方法參照 Message是functional interface, Test是class, talking是裡面的static method
+        obj1.msg(); //此時可以透過interface內的msg方法，透過上面參照方法的宣告後，變成是執行talking方法, 一般情況是由class去implement interface 然後再override method
         // ch25 現代Java運算
     }
 
@@ -2387,3 +2395,17 @@ interface Shapes<T> {
     // abstract T test2(T g); //加這行會出錯
 }
 // 25-2 使用lambda設計匿名類別
+
+// 25-4 方法參照 static method
+@FunctionalInterface
+interface Message {
+    void msg();
+}
+
+class Test {
+    public static void talking() {
+        System.out.println("this is a static method.");
+    }
+}
+
+// 25-4 方法參照 static method
