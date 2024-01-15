@@ -1787,8 +1787,32 @@ public class Main {
         // 2.參考實例方法(instance method) ==> 就是一般宣告的方法
         // 3.參考構造方法(constructor)     ==> 就是建構子
         // 參考靜態方法 containingClass::staticMethodName
-        Message obj1 = (Test::talking); //方法參照 Message是functional interface, Test是class, talking是裡面的static method
-        obj1.msg(); //此時可以透過interface內的msg方法，透過上面參照方法的宣告後，變成是執行talking方法, 一般情況是由class去implement interface 然後再override method
+        Message msgObj1 = (Test::talking); //方法參照 Message是functional interface, Test是class, talking是裡面的static method
+        msgObj1.msg(); //此時可以透過interface內的msg方法，透過上面參照方法的宣告後，變成是執行talking方法, 一般情況是由class去implement interface 然後再override method
+        //參考實例方法 containingObject::instanceMethodName
+        Test obj3 = new Test("");
+        Message msgObj2 = obj3::speaking;   //方法參照
+        msgObj2.msg();
+        //參考建構方法 ClassName:new
+        Message2 msgObj3 = Test::new;    //方法參照
+        msgObj3.msg("this is a constructor");
+
+        // 25-5 工廠方法 factory methods
+        //主要應用於快速建立少量資料的List, Set, Map，省去少量資料還要一直list.add()
+        //建立後即不可更改該物件的元素
+        //List
+        List<String> list8 = List.of("Taipei", "BeiJin", "HongKong");
+        list8.forEach(System.out::println); //使用方法參照列印
+        //list8.add("Paris"); //無法新增, 會報錯
+        //Set
+        Set<String> set2 = Set.of("Taipei", "BeiJin", "HongKong");
+        set2.forEach(System.out::println);
+        //Map
+        Map<Integer, String> map1 = Map.of(101,"BeiJin",102,"HongKong",103,"Taipei");
+        for (Map.Entry m4:map1.entrySet())
+            System.out.printf("%5s : %s\n", m4.getKey(), m4.getValue());
+
+
         // ch25 現代Java運算
     }
 
@@ -2396,16 +2420,32 @@ interface Shapes<T> {
 }
 // 25-2 使用lambda設計匿名類別
 
-// 25-4 方法參照 static method
+// 25-4-1 方法參照
 @FunctionalInterface
 interface Message {
     void msg();
 }
 
+@FunctionalInterface
+interface Message2 {
+    Test msg(String msg);
+}
+
 class Test {
+
+    // static method
     public static void talking() {
         System.out.println("this is a static method.");
     }
-}
 
-// 25-4 方法參照 static method
+    // instance method
+    public void speaking() {
+        System.out.println("this is a instance method.");
+    }
+
+    // constructor
+    Test(String msg) {
+        System.out.println(msg);
+    }
+}
+// 25-4-1 方法參照
