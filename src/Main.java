@@ -11,9 +11,12 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
+import static java.util.stream.Collectors.toList;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
@@ -1811,9 +1814,42 @@ public class Main {
         Map<Integer, String> map1 = Map.of(101,"BeiJin",102,"HongKong",103,"Taipei");
         for (Map.Entry m4:map1.entrySet())
             System.out.printf("%5s : %s\n", m4.getKey(), m4.getValue());
-
-
         // ch25 現代Java運算
+
+        // 補充 stream用法
+        //Java 8 的 Stream API是對集合（Collection）功能的增強，能進行各種便利、高效的聚合操作（aggregate operation），或者數據操作。
+        //同時提供順序流和並行流兩模式進行匯聚操作
+        //將
+        List<Person> person = Arrays.asList(
+                new Person("Eddie", "Peng", "I don't know", 0),
+                new Person("Bill", "Gates", "1999/10/28", 21),
+                new Person("Jobs", "Steve", "1996/02/24", 24),
+                new Person("May", "Frank", "1976/09/12", 44),
+                new Person("Judy", "James", "1978/12/24", 42),
+                new Person("Ben", "Friend", "1995/02/10", 25),
+                new Person("Jobs", "Yang", "1997/01/22", 23)
+        );
+        //透過forEach快速將上述的list內, 每一個物件的firstName和lastName中間加上 - 號
+        person.stream().forEach(x -> System.out.println("名字: " + x.firstName + "-" + x.lastName));   //List本身就有forEach方法, 只是要表達轉成stream仍然可以使用forEach
+
+        //stream.map
+        HashMap<Integer, String> map2 = new HashMap<>();
+        map2.put(1,"Edward");
+        map2.put(2,"Calvin");
+        map2.put(3,"Richard");
+        //透過forEach快速列印出key value
+        map2.forEach((k,v) -> System.out.println("key: " + k + ", value: " + v));
+
+        //filter, 透過stream底下的方法 過濾掉不需要的元素, 以前面的List person數據為例
+        //最後透過collect的方法再轉回List
+        List<Person> younger = person.stream().filter(x -> x.age < 30).collect(toList());   //collect() ==> 將stream轉成新的資料型態 ==> 也可以直接.toList()
+        younger.forEach(x -> System.out.println("小於30歲的人名: " + x.firstName + "-" + x.lastName + ", age: " + x.age));
+
+        //map() 對當前傳入的stream作處理後再轉成另一個stream
+        List<String> uPerson = person.stream().map(x -> x.getLastName().toUpperCase()).toList();
+        uPerson.forEach(x -> System.out.println("lastName轉大寫後: " + x));
+
+
     }
 
     // 8-8 function
@@ -2449,3 +2485,31 @@ class Test {
     }
 }
 // 25-4-1 方法參照
+
+// 補充stream用法
+class Person
+{
+    String firstName;
+    String lastName;
+    String birthday;
+    int age;
+
+    Person(String firstName, String lastName, String birthday, int age)
+    {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthday = lastName;
+        this.age = age;
+    }
+    //這個對之後要印出東西，會有幫助，所以請留著他。
+    public String toString ()
+    {
+        return new StringBuilder(getFirstName()).append("-")
+                .append(getLastName()).toString();
+    }
+    String getFirstName() { return firstName; }
+    String getLastName() { return  lastName; }
+    String getBirthday() { return birthday; }
+    int getAge() { return age; }
+}
+// 補充stream用法
