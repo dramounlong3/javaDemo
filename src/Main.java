@@ -1849,6 +1849,18 @@ public class Main {
         List<String> uPerson = person.stream().map(x -> x.getLastName().toUpperCase()).toList();
         uPerson.forEach(x -> System.out.println("lastName轉大寫後: " + x));
 
+        // 25-6 新的版本字串格式
+        //$MAJOR: 主要版本
+        //$MINOR: 次要版本
+        //$SECURITY: 安全版本
+        //$PATCH: 修補版本
+        Runtime.Version version = Runtime.version();
+        System.out.println("目前版本: " + version);
+        System.out.println("主要版本: " + version.major());
+        System.out.println("次要版本: " + version.minor());
+        System.out.println("安全版本: " + version.security());
+        System.out.println("更新版本: " + version.patch());
+
 
     }
 
