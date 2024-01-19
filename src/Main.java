@@ -4,6 +4,7 @@ import myMath.subMath.CalSub;
 //import myMath.* ===> 不包含 myMath.subMath.* 若用*載入, 則子套件需要額外載入
 
 import java.io.*;
+import java.net.*;
 import java.sql.SQLOutput;
 import java.time.Duration;
 import java.time.Instant;
@@ -1814,6 +1815,19 @@ public class Main {
         Map<Integer, String> map1 = Map.of(101,"BeiJin",102,"HongKong",103,"Taipei");
         for (Map.Entry m4:map1.entrySet())
             System.out.printf("%5s : %s\n", m4.getKey(), m4.getValue());
+
+        // 25-6 新的版本字串格式
+        //$MAJOR: 主要版本
+        //$MINOR: 次要版本
+        //$SECURITY: 安全版本
+        //$PATCH: 修補版本
+        Runtime.Version version = Runtime.version();
+        System.out.println("目前版本: " + version);
+        System.out.println("主要版本: " + version.major());
+        System.out.println("次要版本: " + version.minor());
+        System.out.println("安全版本: " + version.security());
+        System.out.println("更新版本: " + version.patch());
+
         // ch25 現代Java運算
 
         // 補充 stream用法
@@ -1848,18 +1862,76 @@ public class Main {
         //map() 對當前傳入的stream作處理後再轉成另一個stream
         List<String> uPerson = person.stream().map(x -> x.getLastName().toUpperCase()).toList();
         uPerson.forEach(x -> System.out.println("lastName轉大寫後: " + x));
+        // 補充 stream用法
 
-        // 25-6 新的版本字串格式
-        //$MAJOR: 主要版本
-        //$MINOR: 次要版本
-        //$SECURITY: 安全版本
-        //$PATCH: 修補版本
-        Runtime.Version version = Runtime.version();
-        System.out.println("目前版本: " + version);
-        System.out.println("主要版本: " + version.major());
-        System.out.println("次要版本: " + version.minor());
-        System.out.println("安全版本: " + version.security());
-        System.out.println("更新版本: " + version.patch());
+
+        // ch31 網路程式設計
+        // 31-1 InetAddress
+        try {
+            InetAddress inetAddress = InetAddress.getLocalHost();
+            System.out.println("主機名稱: " + inetAddress.getHostName());    //IT06F-120791
+            System.out.println("IP位址: " + inetAddress.getHostAddress());   //10.11.185.6
+            System.out.println(inetAddress);                                 //IT06F-120791/10.11.185.6
+
+            InetAddress facebookIP = InetAddress.getByName("www.facebook.com"); //由domain name取得facebook hostname/ip
+            System.out.println(facebookIP); //www.facebook.com/31.13.87.36
+        } catch (UnknownHostException e) {
+            System.out.println(e);
+        }
+
+        // 31-3 URL (Universal Resource Locator), 用來取得URL相關的資訊
+        // URL = Protocol://Server name:Port number/file_or_directory_name
+        try {
+            URL url = new URL("https://aaa.24ht.com.tw/travel.jpg");
+            System.out.printf("url: \t\t\t%s\n", url);                          // https://aaa.24ht.com.tw/travel.jpg
+            System.out.printf("protocol: \t\t%s\n", url.getProtocol());         // https
+            System.out.printf("authority: \t\t%s\n", url.getAuthority());       // aaa.24ht.com.tw ==> 與host有何差異?
+            System.out.printf("file name: \t\t%s\n", url.getFile());            // /travel.jpg
+            System.out.printf("host: \t\t\t%s\n", url.getHost());               // aaa.24ht.com.tw
+            System.out.printf("path: \t\t\t%s\n", url.getPath());               // /travel.jpg
+            System.out.printf("port: \t\t\t%s\n", url.getPort());               // -1  (因為上述網址沒有寫, 所以為-1)
+            System.out.printf("default port: \t%s\n", url.getDefaultPort());    // 443 (https default為443)
+        } catch (MalformedURLException e) {
+            System.out.println(e);
+        }
+
+        // 31-4 URLConnection用來取得URL網站內的資料, 讀取純英文資料
+        try {
+            URL url = new URL("https://raw.githubusercontent.com/dramounlong3/javaDemo/master/ch22_6.txt");
+            URLConnection urlConnection = url.openConnection();  //只是傳回URLConnection物件
+            InputStream stream = urlConnection.getInputStream(); //此行才真正進行隱式網路連線 查詢上面的url, 但查回的資料是以Byte資料處理, 若有中文會變亂碼
+            System.out.println("檔案大小: " + urlConnection.getContentLength()); // xx bytes
+            System.out.println("檔案類型: " + urlConnection.getContentType()); //text/plain; charset=utf-8
+            int i;
+            while ((i = stream.read()) != -1) {
+                System.out.print((char) i);
+            }
+            System.out.println();
+            stream.close();
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+
+        // 31-4 URLConnection用來取得URL網站內的資料, 讀取純含中英文資料
+        try {
+            URL url = new URL("https://raw.githubusercontent.com/dramounlong3/javaDemo/master/ch22_8.txt");
+            URLConnection urlConnection = url.openConnection();  //只是傳回URLConnection物件
+            InputStream stream = urlConnection.getInputStream(); //此行才真正進行隱式網路連線 查詢上面的url, 但查回的資料是以Byte資料處理, 若有中文會變亂碼
+            InputStreamReader inputStreamReader = new InputStreamReader(stream);    //將byte資料改以字元方式處理
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);  //透過bufferReader輸入
+
+            String str55;
+            while ((str55 = bufferedReader.readLine()) != null) {
+                System.out.println(str55);  //因為一次讀取一行, 故須每次自行換行
+            }
+            bufferedReader.close();
+            inputStreamReader.close();
+            stream.close();
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+
+        // ch31 網路程式設計
 
 
     }
