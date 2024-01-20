@@ -1931,6 +1931,40 @@ public class Main {
             System.out.println(e);
         }
 
+        // 31-5 URLConnection用來取得URL網站內的資料, 讀取網頁資料 (以UTF-8格式避免中文亂碼問題)
+        // 因此範例會回傳整個網頁的HTML內容, 文字較多, 故先註解
+//        try {
+//            URL url = new URL("https://www.pi-314159.com/");
+//            URLConnection urlConnection = url.openConnection();  //只是傳回URLConnection物件
+//            InputStream stream = urlConnection.getInputStream(); //此行才真正進行隱式網路連線 查詢上面的url, 但查回的資料是以Byte資料處理, 若有中文會變亂碼
+//            InputStreamReader inputStreamReader = new InputStreamReader(stream, "UTF-8");    //將byte資料改以字元方式處理, 若HTML回傳的中文字有亂碼, 可以以UTF-8格式解析
+//            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);  //透過bufferReader輸入
+//
+//            String str55;
+//            while ((str55 = bufferedReader.readLine()) != null) {
+//                System.out.println(str55);  //因為一次讀取一行, 故須每次自行換行
+//            }
+//            bufferedReader.close();
+//            inputStreamReader.close();
+//            stream.close();
+//        } catch (IOException e) {
+//            System.out.println(e);
+//        }
+
+        // 31-9 HttpURLConnection ==> 使用於http(s), 可獲得 header, status code, response code
+        try {
+            String str55;
+            URL url = new URL("https://dramounlong3.github.io/odinProject3/");
+            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+            for (int i=1; i<=20; i++) { //20為隨意輸入的數值，實際上可能有更多header information
+                System.out.println(httpURLConnection.getHeaderFieldKey(i) + " = " + httpURLConnection.getHeaderField(i));
+            }
+            httpURLConnection.disconnect();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+
         // ch31 網路程式設計
 
 
