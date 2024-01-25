@@ -1964,7 +1964,63 @@ public class Main {
             System.out.println(e);
         }
 
+        //31-10 Socket 透過TCP的方式建立連線, 公司連不到此主機, 故註解先不執行
+//        try {
+//            String outstr = "google.com";
+//            String hostname = "whois.internic.net";
+//            int port = 43;
+//            //建立連線
+//            Socket socket = new Socket(hostname, port);             //建立socket
+//            OutputStream outputStream = socket.getOutputStream();   //建立output物件
+//            PrintWriter writer = new PrintWriter(outputStream, true);   //建立傳送char字元物件
+//            writer.println(outstr); //送出資料
+//            //取得Server資料
+//            InputStream input = socket.getInputStream();
+//            InputStreamReader inputStreamReader = new InputStreamReader(input); //取得char or String資料
+//            BufferedReader reader = new BufferedReader(inputStreamReader);      //透過bufferReader取得
+//            String line;
+//            while ((line = reader.readLine()) != null) {
+//                System.out.println(line);
+//            }
+//        } catch (UnknownHostException e) {
+//            System.out.println("找不到server: " + e.getMessage());
+//        } catch (IOException e) {
+//            System.out.println("I/O錯誤: " + e.getMessage());
+//        }
 
+        //31-11 server socket
+        try {
+            int port = 2255; //range 0~65535, 0~1023 for system reserve, 3128 for proxy
+            ServerSocket serverSocket = new ServerSocket(port);
+            System.out.println("Server正在監聽port: " + port);
+            while (true) {
+                Socket socket = serverSocket.accept();
+                System.out.println("Server與Client連線成功");
+                OutputStream outputStream = socket.getOutputStream();
+                PrintWriter writer = new PrintWriter(outputStream, true);
+                writer.println("現在日期 from server: " + new Date().toString());
+            }
+        } catch(IOException e) {
+            System.out.println("I/O錯誤: " + e.getMessage());
+        }
+
+        //31-12 此段程式需以另外的Process執行才能與server連線, 此處僅註記保留
+        //配合31-11 socket server 建立socket client
+//        try {
+//            String hostname = "localhost";
+//            int port = 2255;
+//            //建立連線
+//            Socket socket = new Socket(hostname, port);
+//            //取得Server端資料
+//            InputStream inputStream = socket.getInputStream();
+//            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+//            String line = bufferedReader.readLine();
+//            System.out.println(line);
+//        } catch (UnknownHostException e) {
+//            System.out.println("找不到server: " + e.getMessage());
+//        } catch (IOException e) {
+//            System.out.println("I/O 錯誤: " + e.getMessage());
+//        }
         // ch31 網路程式設計
 
 
