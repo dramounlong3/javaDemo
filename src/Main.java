@@ -1988,21 +1988,21 @@ public class Main {
 //            System.out.println("I/O錯誤: " + e.getMessage());
 //        }
 
-        //31-11 server socket
-        try {
-            int port = 2255; //range 0~65535, 0~1023 for system reserve, 3128 for proxy
-            ServerSocket serverSocket = new ServerSocket(port);
-            System.out.println("Server正在監聽port: " + port);
-            while (true) {
-                Socket socket = serverSocket.accept();
-                System.out.println("Server與Client連線成功");
-                OutputStream outputStream = socket.getOutputStream();
-                PrintWriter writer = new PrintWriter(outputStream, true);
-                writer.println("現在日期 from server: " + new Date().toString());
-            }
-        } catch(IOException e) {
-            System.out.println("I/O錯誤: " + e.getMessage());
-        }
+        //31-11 server socket 和 31-12是一組, 先註解, 否則程式會停在這一直監聽
+//        try {
+//            int port = 2255; //range 0~65535, 0~1023 for system reserve, 3128 for proxy
+//            ServerSocket serverSocket = new ServerSocket(port);
+//            System.out.println("Server正在監聽port: " + port);
+//            while (true) {
+//                Socket socket = serverSocket.accept();
+//                System.out.println("Server與Client連線成功");
+//                OutputStream outputStream = socket.getOutputStream();
+//                PrintWriter writer = new PrintWriter(outputStream, true);
+//                writer.println("現在日期 from server: " + new Date().toString());
+//            }
+//        } catch(IOException e) {
+//            System.out.println("I/O錯誤: " + e.getMessage());
+//        }
 
         //31-12 此段程式需以另外的Process執行才能與server連線, 此處僅註記保留
         //配合31-11 socket server 建立socket client
@@ -2021,6 +2021,51 @@ public class Main {
 //        } catch (IOException e) {
 //            System.out.println("I/O 錯誤: " + e.getMessage());
 //        }
+
+        // 31-13 UDP通訊 (不保證對方一定可以收到, 但優點是速度快)
+        // 先註解, 否則程式會停在這一直等待接收
+//        try {
+//            int port = 2225;
+//            byte[] buf = new byte[1024];
+//            System.out.println("接收端UDP程式執行中");
+//
+//            while(true) {
+//                DatagramSocket socket = new DatagramSocket(port);
+//                DatagramPacket data2 = new DatagramPacket(buf, buf.length);
+//                socket.receive(data2);
+//                String msg1 = new String(buf,0,data2.getLength());
+//                System.out.println("UDP傳來的訊息: " +  msg1);
+//                socket.close();
+//            }
+//        }
+//        catch (Exception e) {
+//            System.out.println(e);
+//        }
+
+        //配合31-13 datagram UDP server 建立 UDP client, 和31-11同一時間只能RUN其中一個
+        //此段程式需以另外的Process執行才能與server連線, 此處僅註記保留
+//        try {
+//            //Scanner scanner = new Scanner(System.in);
+//            int port = 2225;
+//            String IP = InetAddress.getLocalHost().getHostAddress(); //取得本機的IP 10.11.185.6
+//            InetAddress inetAddress = InetAddress.getByName(IP);
+//            //while(true) {
+//            System.out.println("說些什麼");
+//            InputStreamReader ir = new InputStreamReader(System.in); //接受使用者的input
+//            BufferedReader br = new BufferedReader(ir);
+//            String txt = br.readLine();      //讀取整行資料
+//            int txtLength = txt.length();
+//            byte[] buf = txt.getBytes();     //將字串儲存成byte陣列
+//            DatagramPacket datagramPacket = new DatagramPacket(buf, txtLength, inetAddress, port); //將資料起來, 並註明要送達的IP和port
+//            DatagramSocket datagramSocket = new DatagramSocket();
+//            datagramSocket.send(datagramPacket); //送出資料到server
+//            datagramSocket.close();
+//            //}
+//        } catch (Exception e) {
+//            System.out.println(e);
+//        }
+
+
         // ch31 網路程式設計
 
 
