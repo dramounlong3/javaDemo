@@ -699,7 +699,7 @@ public class Main {
         // 13-2-1 正規表達式
 
         // 13-2-6 正規表達式 管道 | ==> OR條件
-        //此例可判斷前面2碼的區碼有沒有包含小括號, 都屬於市話
+        //此例可判斷前面2碼的區碼有沒有包含小括號, 都屬於市話, | 前後各屬一組條件
         String str28 = "02-12345678";
         String str29 = "(02)-12345678";
         System.out.println("str28=\"02-12345678\" 是否為市話號碼: " + str28.matches("\\(\\d{2}\\)-\\d{8}|\\d{2}-\\d{8}")); //true
@@ -708,7 +708,7 @@ public class Main {
         // 13-2-7 正規表達式 問號 ? ==> 可有可無的文字
         String str30 = "02-12345678"; //有區碼
         String str31 = "12345678";    //無區碼
-        String pattern1 = "(\\d{2}-)?\\d{8}"; // 小括號內除可分組之外, 若在後面加上問號 表示這組條件可有可無 ==> 意即: 最前面有無  2數字加減號  都無所謂, 但後面一定要有個數字
+        String pattern1 = "(\\d{2}-)?\\d{8}"; // 小括號內除可分組之外, 若在後面加上問號 表示這組條件可有可無 ==> 意即: 最前面有無  2數字加減號  都無所謂, 但後面一定要有8個數字
         System.out.println("str30=\"02-12345678\" 是否為市話: " + str30.matches(pattern1));   //true
         System.out.println("str31=\"12345678\" 是否為市話: " + str31.matches(pattern1));      //true
 
@@ -728,7 +728,7 @@ public class Main {
         String str37 = "jhonnason";
         String str38 = "jhonnanananson";
         String str39 = "jhonxxx";
-        String pattern3 = "jhon(na)+son"; //表示 jhon ... son  中間可以出現 0~多次的na
+        String pattern3 = "jhon(na)+son"; //表示 jhon ... son  中間可以出現 1~多次的na
         System.out.println("str36=\"jhonson\" 是否符合 jhon(na)+son 條件: " + str36.matches(pattern3));   //false 因為na一次都沒有
         System.out.println("str37=\"jhonnason\" 是否符合 jhon(na)+son 條件: " + str37.matches(pattern3));   //true
         System.out.println("str38=\"jhonnanananson\" 是否符合 jhon(na)+son 條件: " + str38.matches(pattern3)); //false, 因為jhon後面出現多次na後 又多了一個n 導致結尾變 nson
